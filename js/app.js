@@ -25465,6 +25465,14 @@ var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
 require("vueify/lib/insert-css");
 
+var _navbar = require("./components/navbar.vue");
+
+var _navbar2 = _interopRequireDefault(_navbar);
+
+var _twitter = require("./components/twitter.vue");
+
+var _twitter2 = _interopRequireDefault(_twitter);
+
 var _index = require("./pages/index.vue");
 
 var _index2 = _interopRequireDefault(_index);
@@ -25511,8 +25519,8 @@ exports.default = Navbar;
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"navbar-fixed"},[_c('nav',{staticClass:"deep-purple darken-4 nav-extended"},[_c('div',{staticClass:"container"},[_c('div',{staticClass:"nav-wrapper"},[_c('router-link',{staticClass:"brand-logo center",attrs:{"to":{ name: 'index' },"id":"brand"}},[_vm._v(" Iuri L. Machado ")])],1),_vm._v(" "),_c('div',{staticClass:"nav-content"},[_c('ul',{staticClass:"tabs tabs-transparent center"},[_c('li',{staticClass:"tab"},[_c('router-link',{attrs:{"to":{ name: 'index' }}},[_vm._v("Sobre")])],1),_vm._v(" "),_vm._m(0),_vm._v(" "),_vm._m(1)])])])])])}
-__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('li',{staticClass:"tab disabled"},[_c('a',[_vm._v("Blog")])])},function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('li',{staticClass:"tab disabled"},[_c('a',[_vm._v("Contato")])])}]
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"navbar-fixed"},[_c('nav',{staticClass:"deep-purple darken-4 nav-extended"},[_c('div',{staticClass:"container"},[_c('div',{staticClass:"nav-wrapper"},[_c('router-link',{staticClass:"brand-logo center",attrs:{"to":{ name: 'index' },"id":"brand"}},[_vm._v(" Iuri L. Machado ")])],1),_vm._v(" "),_c('div',{staticClass:"nav-content"},[_c('ul',{staticClass:"tabs tabs-transparent center"},[_c('li',{staticClass:"tab"},[_c('router-link',{attrs:{"to":{ name: 'index' }}},[_vm._v("Sobre")])],1)])])])])])}
+__vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-f90a1dea"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
@@ -25522,7 +25530,52 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-f90a1dea", __vue__options__)
   } else {
-    hotAPI.reload("data-v-f90a1dea", __vue__options__)
+    hotAPI.rerender("data-v-f90a1dea", __vue__options__)
+  }
+})()}
+});
+
+;require.register("web/static/js/components/twitter.vue", function(exports, require, module) {
+;(function(){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _vue = require("vue");
+
+var _vue2 = _interopRequireDefault(_vue);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var twitter = {
+  mounted: function mounted() {
+    if (window.twttr) {
+      window.twttr.widgets.load(document.getElementById("twitter-container"));
+    } else {
+      console.log("No twitter yet");
+    }
+  }
+};
+
+var Twitter = _vue2.default.component("twitter", twitter);
+
+exports.default = Twitter;
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _vm._m(0)}
+__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a',{staticClass:"twitter-timeline",attrs:{"id":"twitter-container","data-lang":"pt","data-theme":"light","data-link-color":"#311B92","href":"https://twitter.com/machadoiuri"}},[_c('div',{staticClass:"progress deep-purple lighten-4"},[_c('div',{staticClass:"indeterminate deep-purple darken-4"})])])])}]
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-086f8d88", __vue__options__)
+  } else {
+    hotAPI.reload("data-v-086f8d88", __vue__options__)
   }
 })()}
 });
@@ -25535,21 +25588,22 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _navbar = require("../components/navbar.vue");
 
-var _navbar2 = _interopRequireDefault(_navbar);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Index = {};
+var Index = {
+  data: function data() {
+    return {
+      year: new Date().getYear() + 1900
+    };
+  }
+};
 
 exports.default = Index;
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('navbar'),_vm._v(" "),_c('br'),_c('br'),_c('br'),_c('br'),_c('br'),_vm._v(" "),_vm._m(0)],1)}
-__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"container"},[_c('div',{staticClass:"row"},[_c('div',{staticClass:"col s12 center"})]),_vm._v(" "),_c('div',{staticClass:"row"},[_c('div',{staticClass:"col s12 m7"},[_c('h5',[_vm._v("Sobre mim")]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('p',[_vm._v("Olá, sou "),_c('b',[_vm._v("Iuri Lugão Machado")]),_vm._v(", e desenvolvo aplicações que demandam \n          "),_c('i',[_vm._v("alta performance")]),_vm._v(", "),_c('i',[_vm._v("baixa latência")]),_vm._v(", "),_c('i',[_vm._v("tolerância a falhas")]),_vm._v(" e \n          "),_c('i',[_vm._v("escalabilidade")]),_vm._v(". ")]),_vm._v(" "),_c('p',[_vm._v("Conhecido na internet como "),_c('b',[_c('i',[_vm._v("@imetallica")])]),_vm._v(", divido meu tempo entre \n           aprender e criar coisas novas. Acredito que novas tecnologias irão transformar\n           empresas, bem como aumentar a velocidade com que desenvolvemos e a facilidade \n           que damos manutenção ao nossos produtos.")]),_vm._v(" "),_c('p',[_vm._v("Possuo mais de 10 anos de experiência em desenvolvimento de software e já\n           desenvolvi projetos para o Brasil e o exterior.")]),_vm._v(" "),_c('br'),_vm._v(" "),_c('h5',[_vm._v("Como posso ajudar?")]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('li',[_c('p',[_vm._v("Arquitetando soluções e prestando consultoria em Erlang e Elixir, bem como \n           oferecendo treinamento nessas tecnologias e em programação funcional.")])]),_vm._v(" "),_c('li',[_c('p',[_vm._v("Migrando aplicações monolíticas para microserviços, aumentando potencialmente\n           a escalabilidade do seu produto.")])]),_vm._v(" "),_c('li',[_c('p',[_vm._v("Oferecendo treinamento e consultoria com melhores práticas com bancos de dados\n           orientados a documentos e grafos.")])])]),_vm._v(" "),_c('div',{staticClass:"col s12 m1"}),_vm._v(" "),_c('div',{staticClass:"col s12 m4 center"},[_c('a',{staticClass:"twitter-timeline",attrs:{"data-lang":"pt","data-theme":"light","data-link-color":"#311B92","href":"https://twitter.com/machadoiuri"}},[_c('div',{staticClass:"progress deep-purple lighten-4"},[_c('div',{staticClass:"indeterminate deep-purple darken-4"})])])])])])}]
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('navbar'),_vm._v(" "),_c('br'),_c('br'),_c('br'),_c('br'),_c('br'),_vm._v(" "),_c('div',{staticClass:"container"},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"row"},[_vm._m(1),_vm._v(" "),_c('div',{staticClass:"col s12 m1"}),_vm._v(" "),_c('div',{staticClass:"col s12 m4 center"},[_c('twitter')],1)])]),_vm._v(" "),_c('br'),_vm._v(" "),_c('div',{staticClass:"center"},[_c('p',[_c('b',[_vm._v("© "+_vm._s(_vm.year)+". All rights reserved.")])])])],1)}
+__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row"},[_c('div',{staticClass:"col s12 center"})])},function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"col s12 m7"},[_c('h5',[_vm._v("Sobre mim")]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('p',[_vm._v("Olá, sou "),_c('b',[_vm._v("Iuri Lugão Machado")]),_vm._v(", e desenvolvo aplicações que demandam \n          "),_c('i',[_vm._v("alta performance")]),_vm._v(", "),_c('i',[_vm._v("baixa latência")]),_vm._v(", "),_c('i',[_vm._v("tolerância a falhas")]),_vm._v(" e \n          "),_c('i',[_vm._v("escalabilidade")]),_vm._v(". ")]),_vm._v(" "),_c('p',[_vm._v("Conhecido na internet como "),_c('b',[_c('i',[_vm._v("@imetallica")])]),_vm._v(", divido meu tempo entre \n           aprender e criar coisas novas. Acredito que novas tecnologias irão transformar\n           empresas, bem como aumentar a velocidade com que desenvolvemos e a facilidade \n           que damos manutenção ao nossos produtos.")]),_vm._v(" "),_c('p',[_vm._v("Possuo mais de 10 anos de experiência em desenvolvimento de software e já\n           desenvolvi projetos para o Brasil e o exterior.")]),_vm._v(" "),_c('br'),_vm._v(" "),_c('h5',[_vm._v("Como posso ajudar?")]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('li',[_c('p',[_vm._v("Arquitetando soluções e prestando consultoria em Erlang e Elixir, bem como \n           oferecendo treinamento nessas tecnologias e em programação funcional.")])]),_vm._v(" "),_c('li',[_c('p',[_vm._v("Migrando aplicações monolíticas para microserviços, aumentando potencialmente\n           a escalabilidade do seu produto.")])]),_vm._v(" "),_c('li',[_c('p',[_vm._v("Oferecendo treinamento e consultoria com melhores práticas com bancos de dados\n           orientados a documentos e grafos.")])]),_vm._v(" "),_c('br'),_vm._v(" "),_c('div',{staticClass:"center"},[_c('hr'),_vm._v(" "),_c('p',[_vm._v("Caso a ideia de trabalhar comigo lhe agrada, precisaremos conversar para que eu \n             possa entender melhor o seu problema e como posso contribuir para auxiliar a você\n             ou sua empresa.")]),_vm._v(" "),_c('br'),_vm._v(" "),_c('a',{staticClass:"btn deep-purple darken-4",attrs:{"href":"mailto:imetallica@hotmail.com","target":"_top"}},[_vm._v(" Entre em contato ")])])])}]
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return

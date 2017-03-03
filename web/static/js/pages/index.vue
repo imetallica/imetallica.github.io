@@ -36,27 +36,41 @@
 
           <li><p>Oferecendo treinamento e consultoria com melhores práticas com bancos de dados
              orientados a documentos e grafos.</p></li>
+
+          <br />
+
+
+          <div class="center">
+            <hr />
+            <p>Caso a ideia de trabalhar comigo lhe agrada, precisaremos conversar para que eu 
+               possa entender melhor o seu problema e como posso contribuir para auxiliar a você
+               ou sua empresa.</p>
+            <br />
+            <a href="mailto:imetallica@hotmail.com" target="_top"
+               class="btn deep-purple darken-4"> Entre em contato </a>
+          </div>
         </div>
         <div class="col s12 m1"></div>
         <div class="col s12 m4 center">
-          <a class="twitter-timeline" 
-             data-lang="pt" 
-             data-theme="light" 
-             data-link-color="#311B92" 
-             href="https://twitter.com/machadoiuri">
-            <div class="progress deep-purple lighten-4">
-              <div class="indeterminate deep-purple darken-4"></div>
-            </div>  
-          </a>
+          <twitter></twitter>
         </div>
       </div>
+    </div>
+    <br/>
+    <div class="center">
+      <p><b>&copy; {{year}}. All rights reserved.</b></p>
     </div>
   </div>
 </template>
 
 <script>
-import Navbar from "../components/navbar.vue"
-const Index = {}
+const Index = {
+  data: function() {
+    return {
+      year: new Date().getYear() + 1900
+    }
+  }
+}
 
 export default Index
 </script>
