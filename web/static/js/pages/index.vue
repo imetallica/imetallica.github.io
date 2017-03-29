@@ -28,14 +28,16 @@
 
           <h5>Como posso ajudar?</h5>
           <hr />
-          <li><p>Arquitetando soluções e prestando consultoria em Erlang e Elixir, bem como 
-             oferecendo treinamento nessas tecnologias e em programação funcional.</p></li>
+          <ul>
+            <li><p>1. Arquitetando soluções e prestando consultoria em Erlang e Elixir, bem como 
+              oferecendo treinamento nessas tecnologias e em programação funcional.</p></li>
 
-          <li><p>Migrando aplicações monolíticas para microserviços, aumentando potencialmente
-             a escalabilidade do seu produto.</p></li>
+            <li><p>2. Migrando aplicações monolíticas para microserviços, aumentando potencialmente
+              a escalabilidade do seu produto.</p></li>
 
-          <li><p>Oferecendo treinamento e consultoria com melhores práticas com bancos de dados
-             orientados a documentos e grafos.</p></li>
+            <li><p>3. Oferecendo treinamento e consultoria com melhores práticas com bancos de dados
+              orientados a documentos e grafos.</p></li>
+          </ul>
 
           <br />
 

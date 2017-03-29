@@ -66,12 +66,18 @@ exports.config = {
 
   npm: {
     enabled: true,
-    styles: {"materialize-css": [
-      "bin/materialize.css",
-    ]},
+    styles: {
+      "materialize-css": [
+        "bin/materialize.css",
+      ],
+      "prismjs": [
+        "themes/prism.css"
+      ]
+    },
     globals: {
       "jQuery": "materialize-css/bin/jquery-2.1.1.min.js",
-      "materialize": "materialize-css/bin/materialize.js"
+      "materialize": "materialize-css/bin/materialize.js",
+      "prismjs": "prismjs/prism.js"
     },
     aliases: {
       "vue": "vue/dist/vue.common.js"

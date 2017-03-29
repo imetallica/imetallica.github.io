@@ -9,6 +9,7 @@
         <div class="nav-content">
           <ul class="tabs tabs-transparent center">
             <li class="tab"><router-link :to="{ name: 'index' }">Sobre</router-link></li>
+            <li class="tab"><router-link :to="{ name: 'elixir' }">Elixir </router-link></li>
             <!--<li class="tab disabled"><a>Blog</a></li>-->
           </ul>
         </div>
