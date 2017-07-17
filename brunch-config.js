@@ -75,7 +75,7 @@ exports.config = {
       ]
     },
     globals: {
-      "jQuery": "materialize-css/bin/jquery-2.1.1.min.js",
+      "jQuery": "jquery/dist/jquery.min.js",
       "materialize": "materialize-css/bin/materialize.js",
       "prismjs": "prismjs/prism.js"
     },
