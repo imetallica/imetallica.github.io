@@ -52606,7 +52606,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = {
   data: function data() {
     return {
-      posts: [{ name: "[001] Uma longa introdução ao Elixir", path: "001-intro" }]
+      posts: [{ name: "[001] Introdução", path: "001-intro" }]
     };
   },
 
@@ -52627,7 +52627,7 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   if (!module.hot.data) {
     hotAPI.createRecord("data-v-6126c9f8", __vue__options__)
   } else {
-    hotAPI.rerender("data-v-6126c9f8", __vue__options__)
+    hotAPI.reload("data-v-6126c9f8", __vue__options__)
   }
 })()}
 });

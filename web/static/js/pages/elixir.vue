@@ -32,7 +32,7 @@
     data: function() {
       return {
         posts: [
-          { name: "[001] Uma longa introdução ao Elixir", path: "001-intro" }
+          { name: "[001] Introdução", path: "001-intro" }
         ]
       }
     },

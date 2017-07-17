@@ -1,4 +1,4 @@
-#### [001] Uma longa introdução ao Elixir
+#### [001] Introdução
 
 ---
 
