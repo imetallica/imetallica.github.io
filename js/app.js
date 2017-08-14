@@ -40072,7 +40072,7 @@ function assert (condition, message) {
 }
 
 function warn (condition, message) {
-  if ('development' !== 'production' && !condition) {
+  if ('production' !== 'production' && !condition) {
     typeof console !== 'undefined' && console.warn(("[vue-router] " + message));
   }
 }
@@ -40171,7 +40171,7 @@ function resolveProps (route, config) {
     case 'boolean':
       return config ? route.params : undefined
     default:
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         warn(
           false,
           "props in \"" + (route.path) + "\" is a " + (typeof config) + ", " +
@@ -40208,7 +40208,7 @@ function resolveQuery (
   try {
     parsedQuery = parse(query || '');
   } catch (e) {
-    'development' !== 'production' && warn(false, e.message);
+    'production' !== 'production' && warn(false, e.message);
     parsedQuery = {};
   }
   for (var key in extraQuery) {
@@ -41109,7 +41109,7 @@ function fillParams (
       (regexpCompileCache[path] = index.compile(path));
     return filler(params || {}, { pretty: true })
   } catch (e) {
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       warn(false, ("missing param for " + routeMsg + ": " + (e.message)));
     }
     return ''
@@ -41159,7 +41159,7 @@ function addRouteRecord (
 ) {
   var path = route.path;
   var name = route.name;
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     assert(path != null, "\"path\" is required in a route configuration.");
     assert(
       typeof route.component !== 'string',
@@ -41197,7 +41197,7 @@ function addRouteRecord (
     // Warn if route is named, does not redirect and has a default child route.
     // If users navigate to this route by name, the default child will
     // not be rendered (GH Issue #629)
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       if (route.name && !route.redirect && route.children.some(function (child) { return /^\/?$/.test(child.path); })) {
         warn(
           false,
@@ -41246,7 +41246,7 @@ function addRouteRecord (
   if (name) {
     if (!nameMap[name]) {
       nameMap[name] = record;
-    } else if ('development' !== 'production' && !matchAs) {
+    } else if ('production' !== 'production' && !matchAs) {
       warn(
         false,
         "Duplicate named routes definition: " +
@@ -41258,7 +41258,7 @@ function addRouteRecord (
 
 function compileRouteRegex (path, pathToRegexpOptions) {
   var regex = index(path, [], pathToRegexpOptions);
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     var keys = {};
     regex.keys.forEach(function (key) {
       warn(!keys[key.name], ("Duplicate param keys in route with path: \"" + path + "\""));
@@ -41301,7 +41301,7 @@ function normalizeLocation (
     } else if (current.matched.length) {
       var rawPath = current.matched[current.matched.length - 1].path;
       next.path = fillParams(rawPath, params, ("path " + (current.path)));
-    } else if ('development' !== 'production') {
+    } else if ('production' !== 'production') {
       warn(false, "relative params navigation requires a current route.");
     }
     return next
@@ -41365,7 +41365,7 @@ function createMatcher (
 
     if (name) {
       var record = nameMap[name];
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         warn(record, ("Route with name '" + name + "' does not exist"));
       }
       if (!record) { return _createRoute(null, location) }
@@ -41417,7 +41417,7 @@ function createMatcher (
     }
 
     if (!redirect || typeof redirect !== 'object') {
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         warn(
           false, ("invalid redirect option: " + (JSON.stringify(redirect)))
         );
@@ -41438,7 +41438,7 @@ function createMatcher (
     if (name) {
       // resolved named direct
       var targetRecord = nameMap[name];
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         assert(targetRecord, ("redirect failed: named route \"" + name + "\" not found."));
       }
       return match({
@@ -41461,7 +41461,7 @@ function createMatcher (
         hash: hash
       }, undefined, location)
     } else {
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         warn(false, ("invalid redirect option: " + (JSON.stringify(redirect))));
       }
       return _createRoute(null, location)
@@ -41564,7 +41564,7 @@ function handleScroll (
     return
   }
 
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     assert(typeof behavior === 'function', "scrollBehavior must be a function");
   }
 
@@ -41755,7 +41755,7 @@ function resolveAsyncComponents (matched) {
 
         var reject = once(function (reason) {
           var msg = "Failed to resolve async component " + key + ": " + reason;
-          'development' !== 'production' && warn(false, msg);
+          'production' !== 'production' && warn(false, msg);
           if (!error) {
             error = isError(reason)
               ? reason
@@ -42392,7 +42392,7 @@ var VueRouter = function VueRouter (options) {
       this.history = new AbstractHistory(this, options.base);
       break
     default:
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         assert(false, ("invalid mode: " + mode));
       }
   }
@@ -42415,7 +42415,7 @@ prototypeAccessors.currentRoute.get = function () {
 VueRouter.prototype.init = function init (app /* Vue component instance */) {
     var this$1 = this;
 
-  'development' !== 'production' && assert(
+  'production' !== 'production' && assert(
     install.installed,
     "not installed. Make sure to call `Vue.use(VueRouter)` " +
     "before creating root instance."
@@ -42916,12 +42916,12 @@ var config = ({
   /**
    * Show production mode tip message on boot?
    */
-  productionTip: 'development' !== 'production',
+  productionTip: 'production' !== 'production',
 
   /**
    * Whether to enable devtools
    */
-  devtools: 'development' !== 'production',
+  devtools: 'production' !== 'production',
 
   /**
    * Whether to record perf
@@ -43036,7 +43036,7 @@ var warn = noop;
 var tip = noop;
 var formatComponentName = (null); // work around flow check
 
-if ('development' !== 'production') {
+if ('production' !== 'production') {
   var hasConsole = typeof console !== 'undefined';
   var classifyRE = /(?:^|[-_])(\w)/g;
   var classify = function (str) { return str
@@ -43131,7 +43131,7 @@ function handleError (err, vm, info) {
   if (config.errorHandler) {
     config.errorHandler.call(null, err, vm, info);
   } else {
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       warn(("Error in " + info + ": \"" + (err.toString()) + "\""), vm);
     }
     /* istanbul ignore else */
@@ -43561,7 +43561,7 @@ function defineReactive$$1 (
         return
       }
       /* eslint-enable no-self-compare */
-      if ('development' !== 'production' && customSetter) {
+      if ('production' !== 'production' && customSetter) {
         customSetter();
       }
       if (setter) {
@@ -43592,7 +43592,7 @@ function set (target, key, val) {
   }
   var ob = (target).__ob__;
   if (target._isVue || (ob && ob.vmCount)) {
-    'development' !== 'production' && warn(
+    'production' !== 'production' && warn(
       'Avoid adding reactive properties to a Vue instance or its root $data ' +
       'at runtime - declare it upfront in the data option.'
     );
@@ -43617,7 +43617,7 @@ function del (target, key) {
   }
   var ob = (target).__ob__;
   if (target._isVue || (ob && ob.vmCount)) {
-    'development' !== 'production' && warn(
+    'production' !== 'production' && warn(
       'Avoid deleting properties on a Vue instance or its root $data ' +
       '- just set it to null.'
     );
@@ -43659,7 +43659,7 @@ var strats = config.optionMergeStrategies;
 /**
  * Options with restrictions
  */
-if ('development' !== 'production') {
+if ('production' !== 'production') {
   strats.el = strats.propsData = function (parent, child, vm, key) {
     if (!vm) {
       warn(
@@ -43743,7 +43743,7 @@ strats.data = function (
 ) {
   if (!vm) {
     if (childVal && typeof childVal !== 'function') {
-      'development' !== 'production' && warn(
+      'production' !== 'production' && warn(
         'The "data" option should be a function ' +
         'that returns a per-instance value in component ' +
         'definitions.',
@@ -43879,7 +43879,7 @@ function normalizeProps (options) {
       if (typeof val === 'string') {
         name = camelize(val);
         res[name] = { type: null };
-      } else if ('development' !== 'production') {
+      } else if ('production' !== 'production') {
         warn('props must be strings when using array syntax.');
       }
     }
@@ -43932,7 +43932,7 @@ function mergeOptions (
   child,
   vm
 ) {
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     checkComponents(child);
   }
 
@@ -43993,7 +43993,7 @@ function resolveAsset (
   if (hasOwn(assets, PascalCaseId)) { return assets[PascalCaseId] }
   // fallback to prototype chain
   var res = assets[id] || assets[camelizedId] || assets[PascalCaseId];
-  if ('development' !== 'production' && warnMissing && !res) {
+  if ('production' !== 'production' && warnMissing && !res) {
     warn(
       'Failed to resolve ' + type.slice(0, -1) + ': ' + id,
       options
@@ -44031,7 +44031,7 @@ function validateProp (
     observe(value);
     observerState.shouldConvert = prevShouldConvert;
   }
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     assertProp(prop, key, value, vm, absent);
   }
   return value
@@ -44047,7 +44047,7 @@ function getPropDefaultValue (vm, prop, key) {
   }
   var def = prop.default;
   // warn against non-factory defaults for Object & Array
-  if ('development' !== 'production' && isObject(def)) {
+  if ('production' !== 'production' && isObject(def)) {
     warn(
       'Invalid default value for prop "' + key + '": ' +
       'Props with type Object/Array must use a factory function ' +
@@ -44171,7 +44171,7 @@ function isType (type, fn) {
 var mark;
 var measure;
 
-if ('development' !== 'production') {
+if ('production' !== 'production') {
   var perf = inBrowser && window.performance;
   /* istanbul ignore if */
   if (
@@ -44195,7 +44195,7 @@ if ('development' !== 'production') {
 
 var initProxy;
 
-if ('development' !== 'production') {
+if ('production' !== 'production') {
   var allowedGlobals = makeMap(
     'Infinity,undefined,NaN,isFinite,isNaN,' +
     'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
@@ -44404,7 +44404,7 @@ function updateListeners (
     old = oldOn[name];
     event = normalizeEvent(name);
     if (isUndef(cur)) {
-      'development' !== 'production' && warn(
+      'production' !== 'production' && warn(
         "Invalid handler for event \"" + (event.name) + "\": got " + String(cur),
         vm
       );
@@ -44478,7 +44478,7 @@ function extractPropsFromVNodeData (
   if (isDef(attrs) || isDef(props)) {
     for (var key in propOptions) {
       var altKey = hyphenate(key);
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         var keyInLowerCase = key.toLowerCase();
         if (
           key !== keyInLowerCase &&
@@ -44669,7 +44669,7 @@ function resolveAsyncComponent (
     });
 
     var reject = once(function (reason) {
-      'development' !== 'production' && warn(
+      'production' !== 'production' && warn(
         "Failed to resolve async component: " + (String(factory)) +
         (reason ? ("\nReason: " + reason) : '')
       );
@@ -44712,7 +44712,7 @@ function resolveAsyncComponent (
           setTimeout(function () {
             if (isUndef(factory.resolved)) {
               reject(
-                'development' !== 'production'
+                'production' !== 'production'
                   ? ("timeout (" + (res.timeout) + "ms)")
                   : null
               );
@@ -44852,7 +44852,7 @@ function eventsMixin (Vue) {
 
   Vue.prototype.$emit = function (event) {
     var vm = this;
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       var lowerCaseEvent = event.toLowerCase();
       if (lowerCaseEvent !== event && vm._events[lowerCaseEvent]) {
         tip(
@@ -45067,7 +45067,7 @@ function mountComponent (
   vm.$el = el;
   if (!vm.$options.render) {
     vm.$options.render = createEmptyVNode;
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       /* istanbul ignore if */
       if ((vm.$options.template && vm.$options.template.charAt(0) !== '#') ||
         vm.$options.el || el) {
@@ -45089,7 +45089,7 @@ function mountComponent (
 
   var updateComponent;
   /* istanbul ignore if */
-  if ('development' !== 'production' && config.performance && mark) {
+  if ('production' !== 'production' && config.performance && mark) {
     updateComponent = function () {
       var name = vm._name;
       var id = vm._uid;
@@ -45131,7 +45131,7 @@ function updateChildComponent (
   parentVnode,
   renderChildren
 ) {
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     isUpdatingChildComponent = true;
   }
 
@@ -45184,7 +45184,7 @@ function updateChildComponent (
     vm.$forceUpdate();
   }
 
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     isUpdatingChildComponent = false;
   }
 }
@@ -45265,7 +45265,7 @@ var index = 0;
 function resetSchedulerState () {
   index = queue.length = activatedChildren.length = 0;
   has = {};
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     circular = {};
   }
   waiting = flushing = false;
@@ -45296,7 +45296,7 @@ function flushSchedulerQueue () {
     has[id] = null;
     watcher.run();
     // in dev build, check and stop circular updates.
-    if ('development' !== 'production' && has[id] != null) {
+    if ('production' !== 'production' && has[id] != null) {
       circular[id] = (circular[id] || 0) + 1;
       if (circular[id] > MAX_UPDATE_COUNT) {
         warn(
@@ -45420,7 +45420,7 @@ var Watcher = function Watcher (
   this.newDeps = [];
   this.depIds = new _Set();
   this.newDepIds = new _Set();
-  this.expression = 'development' !== 'production'
+  this.expression = 'production' !== 'production'
     ? expOrFn.toString()
     : '';
   // parse expression for getter
@@ -45430,7 +45430,7 @@ var Watcher = function Watcher (
     this.getter = parsePath(expOrFn);
     if (!this.getter) {
       this.getter = function () {};
-      'development' !== 'production' && warn(
+      'production' !== 'production' && warn(
         "Failed watching path: \"" + expOrFn + "\" " +
         'Watcher only accepts simple dot-delimited paths. ' +
         'For full control, use a function instead.',
@@ -45687,7 +45687,7 @@ function initProps (vm, propsOptions) {
     keys.push(key);
     var value = validateProp(key, propsOptions, propsData, vm);
     /* istanbul ignore else */
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       if (isReservedAttribute(key) || config.isReservedAttr(key)) {
         warn(
           ("\"" + key + "\" is a reserved attribute and cannot be used as component prop."),
@@ -45727,7 +45727,7 @@ function initData (vm) {
     : data || {};
   if (!isPlainObject(data)) {
     data = {};
-    'development' !== 'production' && warn(
+    'production' !== 'production' && warn(
       'data functions should return an object:\n' +
       'https://vuejs.org/v2/guide/components.html#data-Must-Be-a-Function',
       vm
@@ -45740,7 +45740,7 @@ function initData (vm) {
   var i = keys.length;
   while (i--) {
     var key = keys[i];
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       if (methods && hasOwn(methods, key)) {
         warn(
           ("method \"" + key + "\" has already been defined as a data property."),
@@ -45749,7 +45749,7 @@ function initData (vm) {
       }
     }
     if (props && hasOwn(props, key)) {
-      'development' !== 'production' && warn(
+      'production' !== 'production' && warn(
         "The data property \"" + key + "\" is already declared as a prop. " +
         "Use prop default value instead.",
         vm
@@ -45774,13 +45774,13 @@ function getData (data, vm) {
 var computedWatcherOptions = { lazy: true };
 
 function initComputed (vm, computed) {
-  'development' !== 'production' && checkOptionType(vm, 'computed');
+  'production' !== 'production' && checkOptionType(vm, 'computed');
   var watchers = vm._computedWatchers = Object.create(null);
 
   for (var key in computed) {
     var userDef = computed[key];
     var getter = typeof userDef === 'function' ? userDef : userDef.get;
-    if ('development' !== 'production' && getter == null) {
+    if ('production' !== 'production' && getter == null) {
       warn(
         ("Getter is missing for computed property \"" + key + "\"."),
         vm
@@ -45794,7 +45794,7 @@ function initComputed (vm, computed) {
     // at instantiation here.
     if (!(key in vm)) {
       defineComputed(vm, key, userDef);
-    } else if ('development' !== 'production') {
+    } else if ('production' !== 'production') {
       if (key in vm.$data) {
         warn(("The computed property \"" + key + "\" is already defined in data."), vm);
       } else if (vm.$options.props && key in vm.$options.props) {
@@ -45818,7 +45818,7 @@ function defineComputed (target, key, userDef) {
       ? userDef.set
       : noop;
   }
-  if ('development' !== 'production' &&
+  if ('production' !== 'production' &&
       sharedPropertyDefinition.set === noop) {
     sharedPropertyDefinition.set = function () {
       warn(
@@ -45846,11 +45846,11 @@ function createComputedGetter (key) {
 }
 
 function initMethods (vm, methods) {
-  'development' !== 'production' && checkOptionType(vm, 'methods');
+  'production' !== 'production' && checkOptionType(vm, 'methods');
   var props = vm.$options.props;
   for (var key in methods) {
     vm[key] = methods[key] == null ? noop : bind(methods[key], vm);
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       if (methods[key] == null) {
         warn(
           "method \"" + key + "\" has an undefined value in the component definition. " +
@@ -45869,7 +45869,7 @@ function initMethods (vm, methods) {
 }
 
 function initWatch (vm, watch) {
-  'development' !== 'production' && checkOptionType(vm, 'watch');
+  'production' !== 'production' && checkOptionType(vm, 'watch');
   for (var key in watch) {
     var handler = watch[key];
     if (Array.isArray(handler)) {
@@ -45906,7 +45906,7 @@ function stateMixin (Vue) {
   dataDef.get = function () { return this._data };
   var propsDef = {};
   propsDef.get = function () { return this._props };
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     dataDef.set = function (newData) {
       warn(
         'Avoid replacing instance root $data. ' +
@@ -45962,7 +45962,7 @@ function initInjections (vm) {
     observerState.shouldConvert = false;
     Object.keys(result).forEach(function (key) {
       /* istanbul ignore else */
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         defineReactive$$1(vm, key, result[key], function () {
           warn(
             "Avoid mutating an injected value directly since the changes will be " +
@@ -45998,7 +45998,7 @@ function resolveInject (inject, vm) {
         }
         source = source.$parent;
       }
-      if ('development' !== 'production' && !source) {
+      if ('production' !== 'production' && !source) {
         warn(("Injection \"" + key + "\" not found"), vm);
       }
     }
@@ -46147,7 +46147,7 @@ function createComponent (
   // if at this stage it's not a constructor or an async component factory,
   // reject.
   if (typeof Ctor !== 'function') {
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       warn(("Invalid Component definition: " + (String(Ctor))), context);
     }
     return
@@ -46317,7 +46317,7 @@ function _createElement (
   normalizationType
 ) {
   if (isDef(data) && isDef((data).__ob__)) {
-    'development' !== 'production' && warn(
+    'production' !== 'production' && warn(
       "Avoid using observed data object as vnode data: " + (JSON.stringify(data)) + "\n" +
       'Always create fresh vnode data objects in each render!',
       context
@@ -46333,7 +46333,7 @@ function _createElement (
     return createEmptyVNode()
   }
   // warn against non-primitive key
-  if ('development' !== 'production' &&
+  if ('production' !== 'production' &&
     isDef(data) && isDef(data.key) && !isPrimitive(data.key)
   ) {
     warn(
@@ -46460,7 +46460,7 @@ function renderSlot (
   } else {
     var slotNodes = this.$slots[name];
     // warn duplicate slot usage
-    if (slotNodes && 'development' !== 'production') {
+    if (slotNodes && 'production' !== 'production') {
       slotNodes._rendered && warn(
         "Duplicate presence of slot \"" + name + "\" found in the same render tree " +
         "- this will likely cause render errors.",
@@ -46513,7 +46513,7 @@ function bindObjectProps (
 ) {
   if (value) {
     if (!isObject(value)) {
-      'development' !== 'production' && warn(
+      'production' !== 'production' && warn(
         'v-bind without argument expects an Object or Array value',
         this
       );
@@ -46617,7 +46617,7 @@ function markStaticNode (node, key, isOnce) {
 function bindObjectListeners (data, value) {
   if (value) {
     if (!isPlainObject(value)) {
-      'development' !== 'production' && warn(
+      'production' !== 'production' && warn(
         'v-on without argument expects an Object value',
         this
       );
@@ -46655,7 +46655,7 @@ function initRender (vm) {
   // they need to be reactive so that HOCs using them are always updated
   var parentData = parentVnode && parentVnode.data;
   /* istanbul ignore else */
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     defineReactive$$1(vm, '$attrs', parentData && parentData.attrs, function () {
       !isUpdatingChildComponent && warn("$attrs is readonly.", vm);
     }, true);
@@ -46704,7 +46704,7 @@ function renderMixin (Vue) {
       // return error render result,
       // or previous vnode to prevent render error causing blank component
       /* istanbul ignore else */
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         vnode = vm.$options.renderError
           ? vm.$options.renderError.call(vm._renderProxy, vm.$createElement, e)
           : vm._vnode;
@@ -46714,7 +46714,7 @@ function renderMixin (Vue) {
     }
     // return empty vnode in case the render function errored out
     if (!(vnode instanceof VNode)) {
-      if ('development' !== 'production' && Array.isArray(vnode)) {
+      if ('production' !== 'production' && Array.isArray(vnode)) {
         warn(
           'Multiple root nodes returned from render function. Render function ' +
           'should return a single root node.',
@@ -46760,7 +46760,7 @@ function initMixin (Vue) {
 
     var startTag, endTag;
     /* istanbul ignore if */
-    if ('development' !== 'production' && config.performance && mark) {
+    if ('production' !== 'production' && config.performance && mark) {
       startTag = "vue-perf-init:" + (vm._uid);
       endTag = "vue-perf-end:" + (vm._uid);
       mark(startTag);
@@ -46782,7 +46782,7 @@ function initMixin (Vue) {
       );
     }
     /* istanbul ignore else */
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       initProxy(vm);
     } else {
       vm._renderProxy = vm;
@@ -46799,7 +46799,7 @@ function initMixin (Vue) {
     callHook(vm, 'created');
 
     /* istanbul ignore if */
-    if ('development' !== 'production' && config.performance && mark) {
+    if ('production' !== 'production' && config.performance && mark) {
       vm._name = formatComponentName(vm, false);
       mark(endTag);
       measure(((vm._name) + " init"), startTag, endTag);
@@ -46886,7 +46886,7 @@ function dedupe (latest, extended, sealed) {
 }
 
 function Vue$3 (options) {
-  if ('development' !== 'production' &&
+  if ('production' !== 'production' &&
     !(this instanceof Vue$3)
   ) {
     warn('Vue is a constructor and should be called with the `new` keyword');
@@ -46955,7 +46955,7 @@ function initExtend (Vue) {
     }
 
     var name = extendOptions.name || Super.options.name;
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       if (!/^[a-zA-Z][\w-]*$/.test(name)) {
         warn(
           'Invalid component name: "' + name + '". Component names ' +
@@ -47044,7 +47044,7 @@ function initAssetRegisters (Vue) {
         return this.options[type + 's'][id]
       } else {
         /* istanbul ignore if */
-        if ('development' !== 'production') {
+        if ('production' !== 'production') {
           if (type === 'component' && config.isReservedTag(id)) {
             warn(
               'Do not use built-in or reserved HTML elements as component ' +
@@ -47175,7 +47175,7 @@ function initGlobalAPI (Vue) {
   // config
   var configDef = {};
   configDef.get = function () { return config; };
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     configDef.set = function () {
       warn(
         'Do not replace the Vue.config object, set individual fields instead.'
@@ -47435,7 +47435,7 @@ function query (el) {
   if (typeof el === 'string') {
     var selected = document.querySelector(el);
     if (!selected) {
-      'development' !== 'production' && warn(
+      'production' !== 'production' && warn(
         'Cannot find element: ' + el
       );
       return document.createElement('div')
@@ -47668,7 +47668,7 @@ function createPatchFunction (backend) {
     var children = vnode.children;
     var tag = vnode.tag;
     if (isDef(tag)) {
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         if (data && data.pre) {
           inPre++;
         }
@@ -47700,7 +47700,7 @@ function createPatchFunction (backend) {
         insert(parentElm, vnode.elm, refElm);
       }
 
-      if ('development' !== 'production' && data && data.pre) {
+      if ('production' !== 'production' && data && data.pre) {
         inPre--;
       }
     } else if (isTrue(vnode.isComment)) {
@@ -47945,7 +47945,7 @@ function createPatchFunction (backend) {
         } else {
           elmToMove = oldCh[idxInOld];
           /* istanbul ignore if */
-          if ('development' !== 'production' && !elmToMove) {
+          if ('production' !== 'production' && !elmToMove) {
             warn(
               'It seems there are duplicate keys that is causing an update error. ' +
               'Make sure each v-for item has a unique key.'
@@ -48056,7 +48056,7 @@ function createPatchFunction (backend) {
       vnode.isAsyncPlaceholder = true;
       return true
     }
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       if (!assertNodeMatch(elm, vnode)) {
         return false
       }
@@ -48091,7 +48091,7 @@ function createPatchFunction (backend) {
           // if childNode is not null, it means the actual childNodes list is
           // longer than the virtual children list.
           if (!childrenMatch || childNode) {
-            if ('development' !== 'production' &&
+            if ('production' !== 'production' &&
               typeof console !== 'undefined' &&
               !bailed
             ) {
@@ -48159,7 +48159,7 @@ function createPatchFunction (backend) {
             if (hydrate(oldVnode, vnode, insertedVnodeQueue)) {
               invokeInsertHook(vnode, insertedVnodeQueue, true);
               return oldVnode
-            } else if ('development' !== 'production') {
+            } else if ('production' !== 'production') {
               warn(
                 'The client-side rendered virtual DOM tree is not matching ' +
                 'server-rendered content. This is likely caused by incorrect ' +
@@ -48586,7 +48586,7 @@ function addHandler (
   // warn prevent and passive modifier
   /* istanbul ignore if */
   if (
-    'development' !== 'production' && warn &&
+    'production' !== 'production' && warn &&
     modifiers && modifiers.prevent && modifiers.passive
   ) {
     warn(
@@ -48817,7 +48817,7 @@ function model (
   var tag = el.tag;
   var type = el.attrsMap.type;
 
-  if ('development' !== 'production') {
+  if ('production' !== 'production') {
     var dynamicType = el.attrsMap['v-bind:type'] || el.attrsMap[':type'];
     if (tag === 'input' && dynamicType) {
       warn$1(
@@ -48851,7 +48851,7 @@ function model (
     genComponentModel(el, value, modifiers);
     // component v-model doesn't need extra runtime
     return false
-  } else if ('development' !== 'production') {
+  } else if ('production' !== 'production') {
     warn$1(
       "<" + (el.tag) + " v-model=\"" + value + "\">: " +
       "v-model is not supported on this element type. " +
@@ -49609,7 +49609,7 @@ function enter (vnode, toggleDisplay) {
       : duration
   );
 
-  if ('development' !== 'production' && explicitEnterDuration != null) {
+  if ('production' !== 'production' && explicitEnterDuration != null) {
     checkDuration(explicitEnterDuration, 'enter', vnode);
   }
 
@@ -49715,7 +49715,7 @@ function leave (vnode, rm) {
       : duration
   );
 
-  if ('development' !== 'production' && isDef(explicitLeaveDuration)) {
+  if ('production' !== 'production' && isDef(explicitLeaveDuration)) {
     checkDuration(explicitLeaveDuration, 'leave', vnode);
   }
 
@@ -49926,7 +49926,7 @@ function setSelected (el, binding, vm) {
   var value = binding.value;
   var isMultiple = el.multiple;
   if (isMultiple && !Array.isArray(value)) {
-    'development' !== 'production' && warn(
+    'production' !== 'production' && warn(
       "<select multiple v-model=\"" + (binding.expression) + "\"> " +
       "expects an Array value for its binding, but got " + (Object.prototype.toString.call(value).slice(8, -1)),
       vm
@@ -50142,7 +50142,7 @@ var Transition = {
     }
 
     // warn multiple elements
-    if ('development' !== 'production' && children.length > 1) {
+    if ('production' !== 'production' && children.length > 1) {
       warn(
         '<transition> can only be used on a single element. Use ' +
         '<transition-group> for lists.',
@@ -50153,7 +50153,7 @@ var Transition = {
     var mode = this.mode;
 
     // warn invalid mode
-    if ('development' !== 'production' &&
+    if ('production' !== 'production' &&
       mode && mode !== 'in-out' && mode !== 'out-in'
     ) {
       warn(
@@ -50276,7 +50276,7 @@ var TransitionGroup = {
           children.push(c);
           map[c.key] = c
           ;(c.data || (c.data = {})).transition = transitionData;
-        } else if ('development' !== 'production') {
+        } else if ('production' !== 'production') {
           var opts = c.componentOptions;
           var name = opts ? (opts.Ctor.options.name || opts.tag || '') : c.tag;
           warn(("<transition-group> children must be keyed: <" + name + ">"));
@@ -50442,14 +50442,14 @@ setTimeout(function () {
   if (config.devtools) {
     if (devtools) {
       devtools.emit('init', Vue$3);
-    } else if ('development' !== 'production' && isChrome) {
+    } else if ('production' !== 'production' && isChrome) {
       console[console.info ? 'info' : 'log'](
         'Download the Vue Devtools extension for a better development experience:\n' +
         'https://github.com/vuejs/vue-devtools'
       );
     }
   }
-  if ('development' !== 'production' &&
+  if ('production' !== 'production' &&
     config.productionTip !== false &&
     inBrowser && typeof console !== 'undefined'
   ) {
@@ -50518,7 +50518,7 @@ function parseText (
 function transformNode (el, options) {
   var warn = options.warn || baseWarn;
   var staticClass = getAndRemoveAttr(el, 'class');
-  if ('development' !== 'production' && staticClass) {
+  if ('production' !== 'production' && staticClass) {
     var expression = parseText(staticClass, options.delimiters);
     if (expression) {
       warn(
@@ -50562,7 +50562,7 @@ function transformNode$1 (el, options) {
   var staticStyle = getAndRemoveAttr(el, 'style');
   if (staticStyle) {
     /* istanbul ignore if */
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       var expression = parseText(staticStyle, options.delimiters);
       if (expression) {
         warn(
@@ -50859,7 +50859,7 @@ function parseHTML (html, options) {
 
     if (html === last) {
       options.chars && options.chars(html);
-      if ('development' !== 'production' && !stack.length && options.warn) {
+      if ('production' !== 'production' && !stack.length && options.warn) {
         options.warn(("Mal-formatted tag at end of template: \"" + html + "\""));
       }
       break
@@ -50966,7 +50966,7 @@ function parseHTML (html, options) {
     if (pos >= 0) {
       // Close all the open elements, up the stack
       for (var i = stack.length - 1; i >= pos; i--) {
-        if ('development' !== 'production' &&
+        if ('production' !== 'production' &&
           (i > pos || !tagName) &&
           options.warn
         ) {
@@ -51096,7 +51096,7 @@ function parse (
 
       if (isForbiddenTag(element) && !isServerRendering()) {
         element.forbidden = true;
-        'development' !== 'production' && warn$2(
+        'production' !== 'production' && warn$2(
           'Templates should only be responsible for mapping the state to the ' +
           'UI. Avoid placing tags with side-effects in your templates, such as ' +
           "<" + tag + ">" + ', as they will not be parsed.'
@@ -51139,7 +51139,7 @@ function parse (
       }
 
       function checkRootConstraints (el) {
-        if ('development' !== 'production') {
+        if ('production' !== 'production') {
           if (el.tag === 'slot' || el.tag === 'template') {
             warnOnce(
               "Cannot use <" + (el.tag) + "> as component root element because it may " +
@@ -51167,7 +51167,7 @@ function parse (
             exp: element.elseif,
             block: element
           });
-        } else if ('development' !== 'production') {
+        } else if ('production' !== 'production') {
           warnOnce(
             "Component template should contain exactly one root element. " +
             "If you are using v-if on multiple elements, " +
@@ -51213,7 +51213,7 @@ function parse (
 
     chars: function chars (text) {
       if (!currentParent) {
-        if ('development' !== 'production') {
+        if ('production' !== 'production') {
           if (text === template) {
             warnOnce(
               'Component template requires a root element, rather than just text.'
@@ -51291,7 +51291,7 @@ function processRawAttrs (el) {
 function processKey (el) {
   var exp = getBindingAttr(el, 'key');
   if (exp) {
-    if ('development' !== 'production' && el.tag === 'template') {
+    if ('production' !== 'production' && el.tag === 'template') {
       warn$2("<template> cannot be keyed. Place the key on real elements instead.");
     }
     el.key = exp;
@@ -51311,7 +51311,7 @@ function processFor (el) {
   if ((exp = getAndRemoveAttr(el, 'v-for'))) {
     var inMatch = exp.match(forAliasRE);
     if (!inMatch) {
-      'development' !== 'production' && warn$2(
+      'production' !== 'production' && warn$2(
         ("Invalid v-for expression: " + exp)
       );
       return
@@ -51357,7 +51357,7 @@ function processIfConditions (el, parent) {
       exp: el.elseif,
       block: el
     });
-  } else if ('development' !== 'production') {
+  } else if ('production' !== 'production') {
     warn$2(
       "v-" + (el.elseif ? ('else-if="' + el.elseif + '"') : 'else') + " " +
       "used on element <" + (el.tag) + "> without corresponding v-if."
@@ -51371,7 +51371,7 @@ function findPrevElement (children) {
     if (children[i].type === 1) {
       return children[i]
     } else {
-      if ('development' !== 'production' && children[i].text !== ' ') {
+      if ('production' !== 'production' && children[i].text !== ' ') {
         warn$2(
           "text \"" + (children[i].text.trim()) + "\" between v-if and v-else(-if) " +
           "will be ignored."
@@ -51399,7 +51399,7 @@ function processOnce (el) {
 function processSlot (el) {
   if (el.tag === 'slot') {
     el.slotName = getBindingAttr(el, 'name');
-    if ('development' !== 'production' && el.key) {
+    if ('production' !== 'production' && el.key) {
       warn$2(
         "`key` does not work on <slot> because slots are abstract outlets " +
         "and can possibly expand into multiple elements. " +
@@ -51481,13 +51481,13 @@ function processAttrs (el) {
           name = name.slice(0, -(arg.length + 1));
         }
         addDirective(el, name, rawName, value, arg, modifiers);
-        if ('development' !== 'production' && name === 'model') {
+        if ('production' !== 'production' && name === 'model') {
           checkForAliasModel(el, value);
         }
       }
     } else {
       // literal attribute
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         var expression = parseText(value, delimiters);
         if (expression) {
           warn$2(
@@ -51527,7 +51527,7 @@ function makeAttrsMap (attrs) {
   var map = {};
   for (var i = 0, l = attrs.length; i < l; i++) {
     if (
-      'development' !== 'production' &&
+      'production' !== 'production' &&
       map[attrs[i].name] && !isIE && !isEdge
     ) {
       warn$2('duplicate attribute: ' + attrs[i].name);
@@ -51756,7 +51756,7 @@ function genHandlers (
   for (var name in events) {
     var handler = events[name];
     // #5330: warn click.right, since right clicks do not actually fire click events.
-    if ('development' !== 'production' &&
+    if ('production' !== 'production' &&
       name === 'click' &&
       handler && handler.modifiers && handler.modifiers.right
     ) {
@@ -51836,7 +51836,7 @@ function genFilterCode (key) {
 /*  */
 
 function on (el, dir) {
-  if ('development' !== 'production' && dir.modifiers) {
+  if ('production' !== 'production' && dir.modifiers) {
     warn("v-on without argument does not support modifiers.");
   }
   el.wrapListeners = function (code) { return ("_g(" + code + "," + (dir.value) + ")"); };
@@ -51941,7 +51941,7 @@ function genOnce (el, state) {
       parent = parent.parent;
     }
     if (!key) {
-      'development' !== 'production' && state.warn(
+      'production' !== 'production' && state.warn(
         "v-once can only be used inside v-for that is keyed. "
       );
       return genElement(el, state)
@@ -52000,7 +52000,7 @@ function genFor (
   var iterator1 = el.iterator1 ? ("," + (el.iterator1)) : '';
   var iterator2 = el.iterator2 ? ("," + (el.iterator2)) : '';
 
-  if ('development' !== 'production' &&
+  if ('production' !== 'production' &&
     state.maybeComponent(el) &&
     el.tag !== 'slot' &&
     el.tag !== 'template' &&
@@ -52125,7 +52125,7 @@ function genDirectives (el, state) {
 
 function genInlineTemplate (el, state) {
   var ast = el.children[0];
-  if ('development' !== 'production' && (
+  if ('production' !== 'production' && (
     el.children.length > 1 || ast.type !== 1
   )) {
     state.warn('Inline-template components must have exactly one child element.');
@@ -52415,7 +52415,7 @@ function createCompileToFunctionFn (compile) {
     options = options || {};
 
     /* istanbul ignore if */
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       // detect possible CSP restriction
       try {
         new Function('return 1');
@@ -52444,7 +52444,7 @@ function createCompileToFunctionFn (compile) {
     var compiled = compile(template, options);
 
     // check compilation errors/tips
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       if (compiled.errors && compiled.errors.length) {
         warn(
           "Error compiling template:\n\n" + template + "\n\n" +
@@ -52469,7 +52469,7 @@ function createCompileToFunctionFn (compile) {
     // this should only happen if there is a bug in the compiler itself.
     // mostly for codegen development use
     /* istanbul ignore if */
-    if ('development' !== 'production') {
+    if ('production' !== 'production') {
       if ((!compiled.errors || !compiled.errors.length) && fnGenErrors.length) {
         warn(
           "Failed to generate render function:\n\n" +
@@ -52525,7 +52525,7 @@ function createCompilerCreator (baseCompile) {
       }
 
       var compiled = baseCompile(template, finalOptions);
-      if ('development' !== 'production') {
+      if ('production' !== 'production') {
         errors.push.apply(errors, detectErrors(compiled.ast));
       }
       compiled.errors = errors;
@@ -52580,7 +52580,7 @@ Vue$3.prototype.$mount = function (
 
   /* istanbul ignore if */
   if (el === document.body || el === document.documentElement) {
-    'development' !== 'production' && warn(
+    'production' !== 'production' && warn(
       "Do not mount Vue to <html> or <body> - mount to normal elements instead."
     );
     return this
@@ -52595,7 +52595,7 @@ Vue$3.prototype.$mount = function (
         if (template.charAt(0) === '#') {
           template = idToTemplate(template);
           /* istanbul ignore if */
-          if ('development' !== 'production' && !template) {
+          if ('production' !== 'production' && !template) {
             warn(
               ("Template element not found or is empty: " + (options.template)),
               this
@@ -52605,7 +52605,7 @@ Vue$3.prototype.$mount = function (
       } else if (template.nodeType) {
         template = template.innerHTML;
       } else {
-        if ('development' !== 'production') {
+        if ('production' !== 'production') {
           warn('invalid template option:' + template, this);
         }
         return this
@@ -52615,7 +52615,7 @@ Vue$3.prototype.$mount = function (
     }
     if (template) {
       /* istanbul ignore if */
-      if ('development' !== 'production' && config.performance && mark) {
+      if ('production' !== 'production' && config.performance && mark) {
         mark('compile');
       }
 
@@ -52630,7 +52630,7 @@ Vue$3.prototype.$mount = function (
       options.staticRenderFns = staticRenderFns;
 
       /* istanbul ignore if */
-      if ('development' !== 'production' && config.performance && mark) {
+      if ('production' !== 'production' && config.performance && mark) {
         mark('compile end');
         measure(((this._name) + " compile"), 'compile', 'compile end');
       }
@@ -52758,7 +52758,7 @@ exports.default = app;
 });
 
 require.register("web/static/js/components/navbar.vue", function(exports, require, module) {
-var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("@import url('https://fonts.googleapis.com/css?family=Lobster');\n\n#brand[data-v-f90a1dea] {\n  font-family: 'Lobster', cursive;\n  text-decoration: underline\n}")
+var __vueify_style_dispose__ = require("vueify/lib/insert-css").insert("@import url(\"https://fonts.googleapis.com/css?family=Lobster\");#brand[data-v-f90a1dea]{font-family:Lobster,cursive;text-decoration:underline}")
 ;(function(){
 "use strict";
 
@@ -52779,21 +52779,10 @@ exports.default = Navbar;
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
 __vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"navbar-fixed"},[_c('nav',{staticClass:"deep-purple darken-4 nav-extended"},[_c('div',{staticClass:"container"},[_c('div',{staticClass:"nav-wrapper"},[_c('router-link',{staticClass:"brand-logo center",attrs:{"to":{ name: 'index' },"id":"brand"}},[_vm._v(" Iuri L. Machado ")])],1),_vm._v(" "),_c('div',{staticClass:"nav-content"},[_c('ul',{staticClass:"tabs tabs-transparent center"},[_c('li',{staticClass:"tab"},[_c('router-link',{attrs:{"to":{ name: 'index' }}},[_vm._v("Início")])],1),_vm._v(" "),_c('li',{staticClass:"tab"},[_c('router-link',{attrs:{"to":{ name: 'microservices' }}},[_vm._v("Microserviços "),_c('small',[_vm._v("com python")])])],1)])])])])])}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-f90a1dea"
-if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  module.hot.dispose(__vueify_style_dispose__)
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-f90a1dea", __vue__options__)
-  } else {
-    hotAPI.reload("data-v-f90a1dea", __vue__options__)
-  }
-})()}
+
 });
 
 ;require.register("web/static/js/components/twitter.vue", function(exports, require, module) {
@@ -52826,19 +52815,9 @@ exports.default = Twitter;
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
 __vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _vm._m(0)}
 __vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('a',{staticClass:"twitter-timeline",attrs:{"id":"twitter-container","data-lang":"pt","data-theme":"light","data-link-color":"#311B92","href":"https://twitter.com/machadoiuri"}},[_c('div',{staticClass:"progress deep-purple lighten-4"},[_c('div',{staticClass:"indeterminate deep-purple darken-4"})])])])}]
-if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-086f8d88", __vue__options__)
-  } else {
-    hotAPI.reload("data-v-086f8d88", __vue__options__)
-  }
-})()}
+
 });
 
 ;require.register("web/static/js/pages/elixir.vue", function(exports, require, module) {
@@ -52869,19 +52848,9 @@ exports.default = {
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
 __vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('Navbar'),_vm._v(" "),_c('br'),_c('br'),_c('br'),_c('br'),_c('br'),_vm._v(" "),_c('div',{staticClass:"container"},[_vm._m(0),_vm._v(" "),_c('hr'),_vm._v(" "),_c('p',[_vm._v("Olá, seja bem vindo ao cantinho que dedico a escrever sobre tudo que já aprendi de Elixir durante\n        esses anos.")]),_vm._v(" "),_c('p',[_vm._v("Aqui você encontrará um tutorial para começar a sua trajetória de desenvolvimento de aplicações \n        tolerantes à falhas, escaláveis e em tempo real, bem como poderá avaliar se Elixir é uma excelente\n        opção para o seu próximo projeto.")]),_vm._v(" "),_c('br'),_vm._v(" "),_c('h6',[_vm._v("Posts")]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('ul',_vm._l((_vm.posts),function(post){return _c('li',{staticClass:"collection deep-purple darken-4"},[_c('router-link',{staticClass:"collection-item deep-purple-text text-darken-4",attrs:{"to":{ name: 'post', params: { language: 'elixir', slug: post.path } }}},[_vm._v(" "+_vm._s(post.name)+" ")])],1)}))])],1)}
 __vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('h5',[_vm._v("Elixir "),_c('small',[_vm._v("101")])])}]
-if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6126c9f8", __vue__options__)
-  } else {
-    hotAPI.reload("data-v-6126c9f8", __vue__options__)
-  }
-})()}
+
 });
 
 ;require.register("web/static/js/pages/index.vue", function(exports, require, module) {
@@ -52905,19 +52874,9 @@ exports.default = Index;
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
 __vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('navbar'),_vm._v(" "),_c('br'),_c('br'),_c('br'),_c('br'),_c('br'),_vm._v(" "),_c('div',{staticClass:"container"},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"row"},[_vm._m(1),_vm._v(" "),_c('div',{staticClass:"col s12 m1"}),_vm._v(" "),_c('div',{staticClass:"col s12 m4 center"},[_c('twitter')],1)])]),_vm._v(" "),_c('br'),_vm._v(" "),_c('div',{staticClass:"center"},[_c('p',[_c('b',[_vm._v("© "+_vm._s(_vm.year)+". All rights reserved.")])])])],1)}
 __vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row"},[_c('div',{staticClass:"col s12 center"})])},function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"col s12 m7"},[_c('h5',[_vm._v("Sobre mim")]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('p',[_vm._v("Olá, sou "),_c('b',[_vm._v("Iuri Lugão Machado")]),_vm._v(", e desenvolvo aplicações que demandam \n          "),_c('i',[_vm._v("alta performance")]),_vm._v(", "),_c('i',[_vm._v("baixa latência")]),_vm._v(", "),_c('i',[_vm._v("tolerância a falhas")]),_vm._v(" e \n          "),_c('i',[_vm._v("escalabilidade")]),_vm._v(". ")]),_vm._v(" "),_c('p',[_vm._v("Conhecido na internet como "),_c('b',[_c('i',[_vm._v("@imetallica")])]),_vm._v(", divido meu tempo entre \n           aprender e criar coisas novas. Acredito que novas tecnologias irão transformar\n           empresas, bem como aumentar a velocidade com que desenvolvemos e a facilidade \n           que damos manutenção ao nossos produtos.")]),_vm._v(" "),_c('p',[_vm._v("\n          Possuo mais de 10 anos de experiência em desenvolvimento de software e já\n          desenvolvi projetos para o Brasil e o exterior.\n        ")]),_vm._v(" "),_c('p',[_vm._v("\n          Atualmente aprendendo Machine Learning e Deep Learning. Acredito que essas\n          tecnologias irão moldar o futuro e prover o diferencial de competitividade\n          para muitas empresas já estabelecidas e startups. \n        ")]),_vm._v(" "),_c('br'),_vm._v(" "),_c('h5',[_vm._v("Como posso ajudar?")]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('ol',[_c('li',[_c('p',[_vm._v("\n              Arquitetando soluções e prestando consultoria. Possuo vasta experiência\n              desenvolvendo aplicações escaláveis e distribuídas em Python e \n              Elixir/Erlang.\n            ")])]),_vm._v(" "),_c('li',[_c('p',[_vm._v("\n              Migrando aplicações monolíticas para microserviços. Nos dias de hoje, é\n              cada vez mais rápido o ciclo de desenvolvimento -> teste -> deploy, para\n              rapidamente responder a possíveis erros e requerimentos diversos. \n              Microserviços nos permitem tanto escalar pedaços de uma aplicação quanto\n              realizar deploy muito mais rapidamente de uma aplicação, reduzindo custos.\n              Bem como, aumentar a velocidade com que novas funcionalidades são adicionadas\n              ao seu produto.\n            ")])]),_vm._v(" "),_c('li',[_c('p',[_vm._v("\n              Oferecendo treinamento e consultoria com melhores práticas com bancos de dados\n              orientados a documentos e grafos. Com o advento dos microserviços, o volume de\n              dados gerados pela sua aplicação aumenta, bem como a flexibilidade em utilizar\n              as melhores ferramentas para resolver o problema específico de um pedaço da sua\n              aplicação. Por exemplo, modelar um sistema que detecta fraudes em pagamentos é\n              muito mais simples de ser feito com um banco orientado a grafos que um banco \n              relacional, como MySQL ou PostgreSQL.\n            ")])])]),_vm._v(" "),_c('br'),_vm._v(" "),_c('div',{staticClass:"center"},[_c('hr'),_vm._v(" "),_c('p',[_vm._v("Caso a ideia de trabalhar comigo lhe agrada, precisaremos conversar para que eu \n             possa entender melhor o seu problema e como posso contribuir para auxiliar a você\n             ou sua empresa.")]),_vm._v(" "),_c('br'),_vm._v(" "),_c('a',{staticClass:"btn deep-purple darken-4",attrs:{"href":"mailto:imetallica@hotmail.com","target":"_top"}},[_vm._v(" Entre em contato ")])])])}]
-if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1902d1ae", __vue__options__)
-  } else {
-    hotAPI.reload("data-v-1902d1ae", __vue__options__)
-  }
-})()}
+
 });
 
 ;require.register("web/static/js/pages/microservices.vue", function(exports, require, module) {
@@ -52948,19 +52907,9 @@ exports.default = {
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
 __vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('Navbar'),_vm._v(" "),_c('br'),_c('br'),_c('br'),_c('br'),_c('br'),_vm._v(" "),_vm._m(0)],1)}
 __vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"container"},[_c('h5',[_vm._v("Microserviços "),_c('small',[_vm._v("com Python")])]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('p',[_vm._v("Eles chegaram pra ficar. Eles ajudam a escalar, modernizar e agilizar o desenvolvimento de aplicações.")]),_vm._v(" "),_c('p',[_vm._v("\n       Aqui demonstrarei como construir sistemas distribuídos, reativos, utilizando padrões reconhecidos pela \n       indústria, utilizando sua linguagem favorita: Python.\n    ")]),_vm._v(" "),_c('br')])}]
-if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3711e279", __vue__options__)
-  } else {
-    hotAPI.reload("data-v-3711e279", __vue__options__)
-  }
-})()}
+
 });
 
 ;require.register("web/static/js/pages/post.vue", function(exports, require, module) {
@@ -53024,19 +52973,9 @@ exports.default = {
 })()
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
-if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
 __vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('navbar'),_vm._v(" "),_c('br'),_c('br'),_c('br'),_c('br'),_c('br'),_vm._v(" "),_c('div',{staticClass:"container"},[_c('button',{staticClass:"btn deep-purple darken-3",on:{"click":_vm.goBack}},[_vm._v("Voltar")]),_vm._v(" "),_c('br'),_c('br'),_vm._v(" "),(_vm.loading)?_c('div'):_c('div',[_c('vue-markdown',[_vm._v(_vm._s(_vm.content))])],1)])],1)}
 __vue__options__.staticRenderFns = []
-if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), true)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-ede91ace", __vue__options__)
-  } else {
-    hotAPI.reload("data-v-ede91ace", __vue__options__)
-  }
-})()}
+
 });
 
 ;require.alias("buffer/index.js", "buffer");
@@ -53065,5 +53004,3 @@ window.prismjs = require("prismjs/prism.js");
 
 });})();require('___globals___');
 
-
-//# sourceMappingURL=app.js.map
