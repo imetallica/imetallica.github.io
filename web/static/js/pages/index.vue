@@ -21,23 +21,54 @@
              empresas, bem como aumentar a velocidade com que desenvolvemos e a facilidade 
              que damos manutenção ao nossos produtos.</p>
           
-          <p>Possuo mais de 10 anos de experiência em desenvolvimento de software e já
-             desenvolvi projetos para o Brasil e o exterior.</p>
+          <p>
+            Possuo mais de 10 anos de experiência em desenvolvimento de software e já
+            desenvolvi projetos para o Brasil e o exterior.
+          </p>
+
+          <p>
+            Atualmente aprendendo Machine Learning e Deep Learning. Acredito que essas
+            tecnologias irão moldar o futuro e prover o diferencial de competitividade
+            para muitas empresas já estabelecidas e startups. 
+          </p>
 
           <br />
 
           <h5>Como posso ajudar?</h5>
           <hr />
-          <ul>
-            <li><p>1. Arquitetando soluções e prestando consultoria em Erlang e Elixir, bem como 
-              oferecendo treinamento nessas tecnologias e em programação funcional.</p></li>
+          <ol>
+            <li>
+              <p>
+                Arquitetando soluções e prestando consultoria. Possuo vasta experiência
+                desenvolvendo aplicações escaláveis e distribuídas em Python e 
+                Elixir/Erlang.
+              </p>
+            </li>
 
-            <li><p>2. Migrando aplicações monolíticas para microserviços, aumentando potencialmente
-              a escalabilidade do seu produto.</p></li>
+            <li>
+              <p>
+                Migrando aplicações monolíticas para microserviços. Nos dias de hoje, é
+                cada vez mais rápido o ciclo de desenvolvimento -> teste -> deploy, para
+                rapidamente responder a possíveis erros e requerimentos diversos. 
+                Microserviços nos permitem tanto escalar pedaços de uma aplicação quanto
+                realizar deploy muito mais rapidamente de uma aplicação, reduzindo custos.
+                Bem como, aumentar a velocidade com que novas funcionalidades são adicionadas
+                ao seu produto.
+              </p>
+            </li>
 
-            <li><p>3. Oferecendo treinamento e consultoria com melhores práticas com bancos de dados
-              orientados a documentos e grafos.</p></li>
-          </ul>
+            <li>
+              <p>
+                Oferecendo treinamento e consultoria com melhores práticas com bancos de dados
+                orientados a documentos e grafos. Com o advento dos microserviços, o volume de
+                dados gerados pela sua aplicação aumenta, bem como a flexibilidade em utilizar
+                as melhores ferramentas para resolver o problema específico de um pedaço da sua
+                aplicação. Por exemplo, modelar um sistema que detecta fraudes em pagamentos é
+                muito mais simples de ser feito com um banco orientado a grafos que um banco 
+                relacional, como MySQL ou PostgreSQL.
+              </p>
+            </li>
+          </ol>
 
           <br />
 

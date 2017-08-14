@@ -156,6 +156,13 @@ require.register("babel-runtime/core-js/get-iterator.js", function(exports, requ
   })();
 });
 
+require.register("babel-runtime/core-js/object/keys.js", function(exports, require, module) {
+  require = __makeRelativeRequire(require, {}, "babel-runtime");
+  (function() {
+    module.exports = { "default": require("core-js/library/fn/object/keys"), __esModule: true };
+  })();
+});
+
 require.register("base64-js/index.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "base64-js");
   (function() {
@@ -2012,11 +2019,19 @@ module.exports = require('../modules/core.get-iterator');
   })();
 });
 
+require.register("core-js/library/fn/object/keys.js", function(exports, require, module) {
+  require = __makeRelativeRequire(require, {}, "core-js");
+  (function() {
+    require('../../modules/es6.object.keys');
+module.exports = require('../../modules/_core').Object.keys;
+  })();
+});
+
 require.register("core-js/library/modules/_a-function.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    module.exports = function(it){
-  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+    module.exports = function (it) {
+  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
   return it;
 };
   })();
@@ -2025,7 +2040,7 @@ require.register("core-js/library/modules/_a-function.js", function(exports, req
 require.register("core-js/library/modules/_add-to-unscopables.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    module.exports = function(){ /* empty */ };
+    module.exports = function () { /* empty */ };
   })();
 });
 
@@ -2033,8 +2048,8 @@ require.register("core-js/library/modules/_an-object.js", function(exports, requ
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     var isObject = require('./_is-object');
-module.exports = function(it){
-  if(!isObject(it))throw TypeError(it + ' is not an object!');
+module.exports = function (it) {
+  if (!isObject(it)) throw TypeError(it + ' is not an object!');
   return it;
 };
   })();
@@ -2045,22 +2060,24 @@ require.register("core-js/library/modules/_array-includes.js", function(exports,
   (function() {
     // false -> Array#indexOf
 // true  -> Array#includes
-var toIObject = require('./_to-iobject')
-  , toLength  = require('./_to-length')
-  , toIndex   = require('./_to-index');
-module.exports = function(IS_INCLUDES){
-  return function($this, el, fromIndex){
-    var O      = toIObject($this)
-      , length = toLength(O.length)
-      , index  = toIndex(fromIndex, length)
-      , value;
+var toIObject = require('./_to-iobject');
+var toLength = require('./_to-length');
+var toAbsoluteIndex = require('./_to-absolute-index');
+module.exports = function (IS_INCLUDES) {
+  return function ($this, el, fromIndex) {
+    var O = toIObject($this);
+    var length = toLength(O.length);
+    var index = toAbsoluteIndex(fromIndex, length);
+    var value;
     // Array#includes uses SameValueZero equality algorithm
-    if(IS_INCLUDES && el != el)while(length > index){
+    // eslint-disable-next-line no-self-compare
+    if (IS_INCLUDES && el != el) while (length > index) {
       value = O[index++];
-      if(value != value)return true;
-    // Array#toIndex ignores holes, Array#includes - not
-    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
-      if(O[index] === el)return IS_INCLUDES || index || 0;
+      // eslint-disable-next-line no-self-compare
+      if (value != value) return true;
+    // Array#indexOf ignores holes, Array#includes - not
+    } else for (;length > index; index++) if (IS_INCLUDES || index in O) {
+      if (O[index] === el) return IS_INCLUDES || index || 0;
     } return !IS_INCLUDES && -1;
   };
 };
@@ -2071,19 +2088,19 @@ require.register("core-js/library/modules/_classof.js", function(exports, requir
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     // getting tag from 19.1.3.6 Object.prototype.toString()
-var cof = require('./_cof')
-  , TAG = require('./_wks')('toStringTag')
-  // ES3 wrong here
-  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
+var cof = require('./_cof');
+var TAG = require('./_wks')('toStringTag');
+// ES3 wrong here
+var ARG = cof(function () { return arguments; }()) == 'Arguments';
 
 // fallback for IE11 Script Access Denied error
-var tryGet = function(it, key){
+var tryGet = function (it, key) {
   try {
     return it[key];
-  } catch(e){ /* empty */ }
+  } catch (e) { /* empty */ }
 };
 
-module.exports = function(it){
+module.exports = function (it) {
   var O, T, B;
   return it === undefined ? 'Undefined' : it === null ? 'Null'
     // @@toStringTag case
@@ -2101,7 +2118,7 @@ require.register("core-js/library/modules/_cof.js", function(exports, require, m
   (function() {
     var toString = {}.toString;
 
-module.exports = function(it){
+module.exports = function (it) {
   return toString.call(it).slice(8, -1);
 };
   })();
@@ -2110,8 +2127,8 @@ module.exports = function(it){
 require.register("core-js/library/modules/_core.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var core = module.exports = {version: '2.4.0'};
-if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+    var core = module.exports = { version: '2.5.0' };
+if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
   })();
 });
 
@@ -2120,21 +2137,21 @@ require.register("core-js/library/modules/_ctx.js", function(exports, require, m
   (function() {
     // optional / simple context binding
 var aFunction = require('./_a-function');
-module.exports = function(fn, that, length){
+module.exports = function (fn, that, length) {
   aFunction(fn);
-  if(that === undefined)return fn;
-  switch(length){
-    case 1: return function(a){
+  if (that === undefined) return fn;
+  switch (length) {
+    case 1: return function (a) {
       return fn.call(that, a);
     };
-    case 2: return function(a, b){
+    case 2: return function (a, b) {
       return fn.call(that, a, b);
     };
-    case 3: return function(a, b, c){
+    case 3: return function (a, b, c) {
       return fn.call(that, a, b, c);
     };
   }
-  return function(/* ...args */){
+  return function (/* ...args */) {
     return fn.apply(that, arguments);
   };
 };
@@ -2145,8 +2162,8 @@ require.register("core-js/library/modules/_defined.js", function(exports, requir
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     // 7.2.1 RequireObjectCoercible(argument)
-module.exports = function(it){
-  if(it == undefined)throw TypeError("Can't call method on  " + it);
+module.exports = function (it) {
+  if (it == undefined) throw TypeError("Can't call method on  " + it);
   return it;
 };
   })();
@@ -2156,8 +2173,8 @@ require.register("core-js/library/modules/_descriptors.js", function(exports, re
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     // Thank's IE8 for his funny defineProperty
-module.exports = !require('./_fails')(function(){
-  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+module.exports = !require('./_fails')(function () {
+  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
 });
   })();
 });
@@ -2165,11 +2182,11 @@ module.exports = !require('./_fails')(function(){
 require.register("core-js/library/modules/_dom-create.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var isObject = require('./_is-object')
-  , document = require('./_global').document
-  // in old IE typeof document.createElement is 'object'
-  , is = isObject(document) && isObject(document.createElement);
-module.exports = function(it){
+    var isObject = require('./_is-object');
+var document = require('./_global').document;
+// typeof document.createElement is 'object' in old IE
+var is = isObject(document) && isObject(document.createElement);
+module.exports = function (it) {
   return is ? document.createElement(it) : {};
 };
   })();
@@ -2188,28 +2205,28 @@ module.exports = (
 require.register("core-js/library/modules/_export.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var global    = require('./_global')
-  , core      = require('./_core')
-  , ctx       = require('./_ctx')
-  , hide      = require('./_hide')
-  , PROTOTYPE = 'prototype';
+    var global = require('./_global');
+var core = require('./_core');
+var ctx = require('./_ctx');
+var hide = require('./_hide');
+var PROTOTYPE = 'prototype';
 
-var $export = function(type, name, source){
-  var IS_FORCED = type & $export.F
-    , IS_GLOBAL = type & $export.G
-    , IS_STATIC = type & $export.S
-    , IS_PROTO  = type & $export.P
-    , IS_BIND   = type & $export.B
-    , IS_WRAP   = type & $export.W
-    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
-    , expProto  = exports[PROTOTYPE]
-    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
-    , key, own, out;
-  if(IS_GLOBAL)source = name;
-  for(key in source){
+var $export = function (type, name, source) {
+  var IS_FORCED = type & $export.F;
+  var IS_GLOBAL = type & $export.G;
+  var IS_STATIC = type & $export.S;
+  var IS_PROTO = type & $export.P;
+  var IS_BIND = type & $export.B;
+  var IS_WRAP = type & $export.W;
+  var exports = IS_GLOBAL ? core : core[name] || (core[name] = {});
+  var expProto = exports[PROTOTYPE];
+  var target = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE];
+  var key, own, out;
+  if (IS_GLOBAL) source = name;
+  for (key in source) {
     // contains in native
     own = !IS_FORCED && target && target[key] !== undefined;
-    if(own && key in exports)continue;
+    if (own && key in exports) continue;
     // export native or passed
     out = own ? target[key] : source[key];
     // prevent global pollution for namespaces
@@ -2217,11 +2234,11 @@ var $export = function(type, name, source){
     // bind timers to global for call from export context
     : IS_BIND && own ? ctx(out, global)
     // wrap global constructors for prevent change them in library
-    : IS_WRAP && target[key] == out ? (function(C){
-      var F = function(a, b, c){
-        if(this instanceof C){
-          switch(arguments.length){
-            case 0: return new C;
+    : IS_WRAP && target[key] == out ? (function (C) {
+      var F = function (a, b, c) {
+        if (this instanceof C) {
+          switch (arguments.length) {
+            case 0: return new C();
             case 1: return new C(a);
             case 2: return new C(a, b);
           } return new C(a, b, c);
@@ -2232,10 +2249,10 @@ var $export = function(type, name, source){
     // make static versions for prototype methods
     })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
     // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
-    if(IS_PROTO){
+    if (IS_PROTO) {
       (exports.virtual || (exports.virtual = {}))[key] = out;
       // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
-      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
+      if (type & $export.R && expProto && !expProto[key]) hide(expProto, key, out);
     }
   }
 };
@@ -2247,7 +2264,7 @@ $export.P = 8;   // proto
 $export.B = 16;  // bind
 $export.W = 32;  // wrap
 $export.U = 64;  // safe
-$export.R = 128; // real proto method for `library` 
+$export.R = 128; // real proto method for `library`
 module.exports = $export;
   })();
 });
@@ -2255,10 +2272,10 @@ module.exports = $export;
 require.register("core-js/library/modules/_fails.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    module.exports = function(exec){
+    module.exports = function (exec) {
   try {
     return !!exec();
-  } catch(e){
+  } catch (e) {
     return true;
   }
 };
@@ -2270,8 +2287,10 @@ require.register("core-js/library/modules/_global.js", function(exports, require
   (function() {
     // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
-if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+  ? window : typeof self != 'undefined' && self.Math == Math ? self
+  // eslint-disable-next-line no-new-func
+  : Function('return this')();
+if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
   })();
 });
 
@@ -2279,7 +2298,7 @@ require.register("core-js/library/modules/_has.js", function(exports, require, m
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     var hasOwnProperty = {}.hasOwnProperty;
-module.exports = function(it, key){
+module.exports = function (it, key) {
   return hasOwnProperty.call(it, key);
 };
   })();
@@ -2288,11 +2307,11 @@ module.exports = function(it, key){
 require.register("core-js/library/modules/_hide.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var dP         = require('./_object-dp')
-  , createDesc = require('./_property-desc');
-module.exports = require('./_descriptors') ? function(object, key, value){
+    var dP = require('./_object-dp');
+var createDesc = require('./_property-desc');
+module.exports = require('./_descriptors') ? function (object, key, value) {
   return dP.f(object, key, createDesc(1, value));
-} : function(object, key, value){
+} : function (object, key, value) {
   object[key] = value;
   return object;
 };
@@ -2302,15 +2321,16 @@ module.exports = require('./_descriptors') ? function(object, key, value){
 require.register("core-js/library/modules/_html.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    module.exports = require('./_global').document && document.documentElement;
+    var document = require('./_global').document;
+module.exports = document && document.documentElement;
   })();
 });
 
 require.register("core-js/library/modules/_ie8-dom-define.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    module.exports = !require('./_descriptors') && !require('./_fails')(function(){
-  return Object.defineProperty(require('./_dom-create')('div'), 'a', {get: function(){ return 7; }}).a != 7;
+    module.exports = !require('./_descriptors') && !require('./_fails')(function () {
+  return Object.defineProperty(require('./_dom-create')('div'), 'a', { get: function () { return 7; } }).a != 7;
 });
   })();
 });
@@ -2320,7 +2340,8 @@ require.register("core-js/library/modules/_iobject.js", function(exports, requir
   (function() {
     // fallback for non-array-like ES3 and non-enumerable old V8 strings
 var cof = require('./_cof');
-module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+// eslint-disable-next-line no-prototype-builtins
+module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
   })();
@@ -2329,7 +2350,7 @@ module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
 require.register("core-js/library/modules/_is-object.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    module.exports = function(it){
+    module.exports = function (it) {
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
   })();
@@ -2339,16 +2360,16 @@ require.register("core-js/library/modules/_iter-create.js", function(exports, re
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     'use strict';
-var create         = require('./_object-create')
-  , descriptor     = require('./_property-desc')
-  , setToStringTag = require('./_set-to-string-tag')
-  , IteratorPrototype = {};
+var create = require('./_object-create');
+var descriptor = require('./_property-desc');
+var setToStringTag = require('./_set-to-string-tag');
+var IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-require('./_hide')(IteratorPrototype, require('./_wks')('iterator'), function(){ return this; });
+require('./_hide')(IteratorPrototype, require('./_wks')('iterator'), function () { return this; });
 
-module.exports = function(Constructor, NAME, next){
-  Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
+module.exports = function (Constructor, NAME, next) {
+  Constructor.prototype = create(IteratorPrototype, { next: descriptor(1, next) });
   setToStringTag(Constructor, NAME + ' Iterator');
 };
   })();
@@ -2358,71 +2379,71 @@ require.register("core-js/library/modules/_iter-define.js", function(exports, re
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     'use strict';
-var LIBRARY        = require('./_library')
-  , $export        = require('./_export')
-  , redefine       = require('./_redefine')
-  , hide           = require('./_hide')
-  , has            = require('./_has')
-  , Iterators      = require('./_iterators')
-  , $iterCreate    = require('./_iter-create')
-  , setToStringTag = require('./_set-to-string-tag')
-  , getPrototypeOf = require('./_object-gpo')
-  , ITERATOR       = require('./_wks')('iterator')
-  , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
-  , FF_ITERATOR    = '@@iterator'
-  , KEYS           = 'keys'
-  , VALUES         = 'values';
+var LIBRARY = require('./_library');
+var $export = require('./_export');
+var redefine = require('./_redefine');
+var hide = require('./_hide');
+var has = require('./_has');
+var Iterators = require('./_iterators');
+var $iterCreate = require('./_iter-create');
+var setToStringTag = require('./_set-to-string-tag');
+var getPrototypeOf = require('./_object-gpo');
+var ITERATOR = require('./_wks')('iterator');
+var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
+var FF_ITERATOR = '@@iterator';
+var KEYS = 'keys';
+var VALUES = 'values';
 
-var returnThis = function(){ return this; };
+var returnThis = function () { return this; };
 
-module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED){
+module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
   $iterCreate(Constructor, NAME, next);
-  var getMethod = function(kind){
-    if(!BUGGY && kind in proto)return proto[kind];
-    switch(kind){
-      case KEYS: return function keys(){ return new Constructor(this, kind); };
-      case VALUES: return function values(){ return new Constructor(this, kind); };
-    } return function entries(){ return new Constructor(this, kind); };
+  var getMethod = function (kind) {
+    if (!BUGGY && kind in proto) return proto[kind];
+    switch (kind) {
+      case KEYS: return function keys() { return new Constructor(this, kind); };
+      case VALUES: return function values() { return new Constructor(this, kind); };
+    } return function entries() { return new Constructor(this, kind); };
   };
-  var TAG        = NAME + ' Iterator'
-    , DEF_VALUES = DEFAULT == VALUES
-    , VALUES_BUG = false
-    , proto      = Base.prototype
-    , $native    = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT]
-    , $default   = $native || getMethod(DEFAULT)
-    , $entries   = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined
-    , $anyNative = NAME == 'Array' ? proto.entries || $native : $native
-    , methods, key, IteratorPrototype;
+  var TAG = NAME + ' Iterator';
+  var DEF_VALUES = DEFAULT == VALUES;
+  var VALUES_BUG = false;
+  var proto = Base.prototype;
+  var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
+  var $default = $native || getMethod(DEFAULT);
+  var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
+  var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
+  var methods, key, IteratorPrototype;
   // Fix native
-  if($anyNative){
-    IteratorPrototype = getPrototypeOf($anyNative.call(new Base));
-    if(IteratorPrototype !== Object.prototype){
+  if ($anyNative) {
+    IteratorPrototype = getPrototypeOf($anyNative.call(new Base()));
+    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
       // Set @@toStringTag to native iterators
       setToStringTag(IteratorPrototype, TAG, true);
       // fix for some old engines
-      if(!LIBRARY && !has(IteratorPrototype, ITERATOR))hide(IteratorPrototype, ITERATOR, returnThis);
+      if (!LIBRARY && !has(IteratorPrototype, ITERATOR)) hide(IteratorPrototype, ITERATOR, returnThis);
     }
   }
   // fix Array#{values, @@iterator}.name in V8 / FF
-  if(DEF_VALUES && $native && $native.name !== VALUES){
+  if (DEF_VALUES && $native && $native.name !== VALUES) {
     VALUES_BUG = true;
-    $default = function values(){ return $native.call(this); };
+    $default = function values() { return $native.call(this); };
   }
   // Define iterator
-  if((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])){
+  if ((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
     hide(proto, ITERATOR, $default);
   }
   // Plug for library
   Iterators[NAME] = $default;
-  Iterators[TAG]  = returnThis;
-  if(DEFAULT){
+  Iterators[TAG] = returnThis;
+  if (DEFAULT) {
     methods = {
-      values:  DEF_VALUES ? $default : getMethod(VALUES),
-      keys:    IS_SET     ? $default : getMethod(KEYS),
+      values: DEF_VALUES ? $default : getMethod(VALUES),
+      keys: IS_SET ? $default : getMethod(KEYS),
       entries: $entries
     };
-    if(FORCED)for(key in methods){
-      if(!(key in proto))redefine(proto, key, methods[key]);
+    if (FORCED) for (key in methods) {
+      if (!(key in proto)) redefine(proto, key, methods[key]);
     } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
   }
   return methods;
@@ -2433,8 +2454,8 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
 require.register("core-js/library/modules/_iter-step.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    module.exports = function(done, value){
-  return {value: value, done: !!done};
+    module.exports = function (done, value) {
+  return { value: value, done: !!done };
 };
   })();
 });
@@ -2457,21 +2478,21 @@ require.register("core-js/library/modules/_object-create.js", function(exports, 
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject    = require('./_an-object')
-  , dPs         = require('./_object-dps')
-  , enumBugKeys = require('./_enum-bug-keys')
-  , IE_PROTO    = require('./_shared-key')('IE_PROTO')
-  , Empty       = function(){ /* empty */ }
-  , PROTOTYPE   = 'prototype';
+var anObject = require('./_an-object');
+var dPs = require('./_object-dps');
+var enumBugKeys = require('./_enum-bug-keys');
+var IE_PROTO = require('./_shared-key')('IE_PROTO');
+var Empty = function () { /* empty */ };
+var PROTOTYPE = 'prototype';
 
 // Create object with fake `null` prototype: use iframe Object with cleared prototype
-var createDict = function(){
+var createDict = function () {
   // Thrash, waste and sodomy: IE GC bug
-  var iframe = require('./_dom-create')('iframe')
-    , i      = enumBugKeys.length
-    , lt     = '<'
-    , gt     = '>'
-    , iframeDocument;
+  var iframe = require('./_dom-create')('iframe');
+  var i = enumBugKeys.length;
+  var lt = '<';
+  var gt = '>';
+  var iframeDocument;
   iframe.style.display = 'none';
   require('./_html').appendChild(iframe);
   iframe.src = 'javascript:'; // eslint-disable-line no-script-url
@@ -2482,15 +2503,15 @@ var createDict = function(){
   iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
   iframeDocument.close();
   createDict = iframeDocument.F;
-  while(i--)delete createDict[PROTOTYPE][enumBugKeys[i]];
+  while (i--) delete createDict[PROTOTYPE][enumBugKeys[i]];
   return createDict();
 };
 
-module.exports = Object.create || function create(O, Properties){
+module.exports = Object.create || function create(O, Properties) {
   var result;
-  if(O !== null){
+  if (O !== null) {
     Empty[PROTOTYPE] = anObject(O);
-    result = new Empty;
+    result = new Empty();
     Empty[PROTOTYPE] = null;
     // add "__proto__" for Object.getPrototypeOf polyfill
     result[IE_PROTO] = O;
@@ -2503,20 +2524,20 @@ module.exports = Object.create || function create(O, Properties){
 require.register("core-js/library/modules/_object-dp.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var anObject       = require('./_an-object')
-  , IE8_DOM_DEFINE = require('./_ie8-dom-define')
-  , toPrimitive    = require('./_to-primitive')
-  , dP             = Object.defineProperty;
+    var anObject = require('./_an-object');
+var IE8_DOM_DEFINE = require('./_ie8-dom-define');
+var toPrimitive = require('./_to-primitive');
+var dP = Object.defineProperty;
 
-exports.f = require('./_descriptors') ? Object.defineProperty : function defineProperty(O, P, Attributes){
+exports.f = require('./_descriptors') ? Object.defineProperty : function defineProperty(O, P, Attributes) {
   anObject(O);
   P = toPrimitive(P, true);
   anObject(Attributes);
-  if(IE8_DOM_DEFINE)try {
+  if (IE8_DOM_DEFINE) try {
     return dP(O, P, Attributes);
-  } catch(e){ /* empty */ }
-  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
-  if('value' in Attributes)O[P] = Attributes.value;
+  } catch (e) { /* empty */ }
+  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
+  if ('value' in Attributes) O[P] = Attributes.value;
   return O;
 };
   })();
@@ -2525,17 +2546,17 @@ exports.f = require('./_descriptors') ? Object.defineProperty : function defineP
 require.register("core-js/library/modules/_object-dps.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var dP       = require('./_object-dp')
-  , anObject = require('./_an-object')
-  , getKeys  = require('./_object-keys');
+    var dP = require('./_object-dp');
+var anObject = require('./_an-object');
+var getKeys = require('./_object-keys');
 
-module.exports = require('./_descriptors') ? Object.defineProperties : function defineProperties(O, Properties){
+module.exports = require('./_descriptors') ? Object.defineProperties : function defineProperties(O, Properties) {
   anObject(O);
-  var keys   = getKeys(Properties)
-    , length = keys.length
-    , i = 0
-    , P;
-  while(length > i)dP.f(O, P = keys[i++], Properties[P]);
+  var keys = getKeys(Properties);
+  var length = keys.length;
+  var i = 0;
+  var P;
+  while (length > i) dP.f(O, P = keys[i++], Properties[P]);
   return O;
 };
   })();
@@ -2545,15 +2566,15 @@ require.register("core-js/library/modules/_object-gpo.js", function(exports, req
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
-var has         = require('./_has')
-  , toObject    = require('./_to-object')
-  , IE_PROTO    = require('./_shared-key')('IE_PROTO')
-  , ObjectProto = Object.prototype;
+var has = require('./_has');
+var toObject = require('./_to-object');
+var IE_PROTO = require('./_shared-key')('IE_PROTO');
+var ObjectProto = Object.prototype;
 
-module.exports = Object.getPrototypeOf || function(O){
+module.exports = Object.getPrototypeOf || function (O) {
   O = toObject(O);
-  if(has(O, IE_PROTO))return O[IE_PROTO];
-  if(typeof O.constructor == 'function' && O instanceof O.constructor){
+  if (has(O, IE_PROTO)) return O[IE_PROTO];
+  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
     return O.constructor.prototype;
   } return O instanceof Object ? ObjectProto : null;
 };
@@ -2563,19 +2584,19 @@ module.exports = Object.getPrototypeOf || function(O){
 require.register("core-js/library/modules/_object-keys-internal.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var has          = require('./_has')
-  , toIObject    = require('./_to-iobject')
-  , arrayIndexOf = require('./_array-includes')(false)
-  , IE_PROTO     = require('./_shared-key')('IE_PROTO');
+    var has = require('./_has');
+var toIObject = require('./_to-iobject');
+var arrayIndexOf = require('./_array-includes')(false);
+var IE_PROTO = require('./_shared-key')('IE_PROTO');
 
-module.exports = function(object, names){
-  var O      = toIObject(object)
-    , i      = 0
-    , result = []
-    , key;
-  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
+module.exports = function (object, names) {
+  var O = toIObject(object);
+  var i = 0;
+  var result = [];
+  var key;
+  for (key in O) if (key != IE_PROTO) has(O, key) && result.push(key);
   // Don't enum bug & hidden keys
-  while(names.length > i)if(has(O, key = names[i++])){
+  while (names.length > i) if (has(O, key = names[i++])) {
     ~arrayIndexOf(result, key) || result.push(key);
   }
   return result;
@@ -2587,11 +2608,27 @@ require.register("core-js/library/modules/_object-keys.js", function(exports, re
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     // 19.1.2.14 / 15.2.3.14 Object.keys(O)
-var $keys       = require('./_object-keys-internal')
-  , enumBugKeys = require('./_enum-bug-keys');
+var $keys = require('./_object-keys-internal');
+var enumBugKeys = require('./_enum-bug-keys');
 
-module.exports = Object.keys || function keys(O){
+module.exports = Object.keys || function keys(O) {
   return $keys(O, enumBugKeys);
+};
+  })();
+});
+
+require.register("core-js/library/modules/_object-sap.js", function(exports, require, module) {
+  require = __makeRelativeRequire(require, {}, "core-js");
+  (function() {
+    // most Object methods by ES6 should accept primitives
+var $export = require('./_export');
+var core = require('./_core');
+var fails = require('./_fails');
+module.exports = function (KEY, exec) {
+  var fn = (core.Object || {})[KEY] || Object[KEY];
+  var exp = {};
+  exp[KEY] = exec(fn);
+  $export($export.S + $export.F * fails(function () { fn(1); }), 'Object', exp);
 };
   })();
 });
@@ -2599,12 +2636,12 @@ module.exports = Object.keys || function keys(O){
 require.register("core-js/library/modules/_property-desc.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    module.exports = function(bitmap, value){
+    module.exports = function (bitmap, value) {
   return {
-    enumerable  : !(bitmap & 1),
+    enumerable: !(bitmap & 1),
     configurable: !(bitmap & 2),
-    writable    : !(bitmap & 4),
-    value       : value
+    writable: !(bitmap & 4),
+    value: value
   };
 };
   })();
@@ -2620,12 +2657,12 @@ require.register("core-js/library/modules/_redefine.js", function(exports, requi
 require.register("core-js/library/modules/_set-to-string-tag.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var def = require('./_object-dp').f
-  , has = require('./_has')
-  , TAG = require('./_wks')('toStringTag');
+    var def = require('./_object-dp').f;
+var has = require('./_has');
+var TAG = require('./_wks')('toStringTag');
 
-module.exports = function(it, tag, stat){
-  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
+module.exports = function (it, tag, stat) {
+  if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
 };
   })();
 });
@@ -2633,9 +2670,9 @@ module.exports = function(it, tag, stat){
 require.register("core-js/library/modules/_shared-key.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var shared = require('./_shared')('keys')
-  , uid    = require('./_uid');
-module.exports = function(key){
+    var shared = require('./_shared')('keys');
+var uid = require('./_uid');
+module.exports = function (key) {
   return shared[key] || (shared[key] = uid(key));
 };
   })();
@@ -2644,10 +2681,10 @@ module.exports = function(key){
 require.register("core-js/library/modules/_shared.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var global = require('./_global')
-  , SHARED = '__core-js_shared__'
-  , store  = global[SHARED] || (global[SHARED] = {});
-module.exports = function(key){
+    var global = require('./_global');
+var SHARED = '__core-js_shared__';
+var store = global[SHARED] || (global[SHARED] = {});
+module.exports = function (key) {
   return store[key] || (store[key] = {});
 };
   })();
@@ -2656,17 +2693,17 @@ module.exports = function(key){
 require.register("core-js/library/modules/_string-at.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var toInteger = require('./_to-integer')
-  , defined   = require('./_defined');
+    var toInteger = require('./_to-integer');
+var defined = require('./_defined');
 // true  -> String#at
 // false -> String#codePointAt
-module.exports = function(TO_STRING){
-  return function(that, pos){
-    var s = String(defined(that))
-      , i = toInteger(pos)
-      , l = s.length
-      , a, b;
-    if(i < 0 || i >= l)return TO_STRING ? '' : undefined;
+module.exports = function (TO_STRING) {
+  return function (that, pos) {
+    var s = String(defined(that));
+    var i = toInteger(pos);
+    var l = s.length;
+    var a, b;
+    if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
     a = s.charCodeAt(i);
     return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
       ? TO_STRING ? s.charAt(i) : a
@@ -2676,13 +2713,13 @@ module.exports = function(TO_STRING){
   })();
 });
 
-require.register("core-js/library/modules/_to-index.js", function(exports, require, module) {
+require.register("core-js/library/modules/_to-absolute-index.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var toInteger = require('./_to-integer')
-  , max       = Math.max
-  , min       = Math.min;
-module.exports = function(index, length){
+    var toInteger = require('./_to-integer');
+var max = Math.max;
+var min = Math.min;
+module.exports = function (index, length) {
   index = toInteger(index);
   return index < 0 ? max(index + length, 0) : min(index, length);
 };
@@ -2693,9 +2730,9 @@ require.register("core-js/library/modules/_to-integer.js", function(exports, req
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     // 7.1.4 ToInteger
-var ceil  = Math.ceil
-  , floor = Math.floor;
-module.exports = function(it){
+var ceil = Math.ceil;
+var floor = Math.floor;
+module.exports = function (it) {
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
   })();
@@ -2705,9 +2742,9 @@ require.register("core-js/library/modules/_to-iobject.js", function(exports, req
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     // to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = require('./_iobject')
-  , defined = require('./_defined');
-module.exports = function(it){
+var IObject = require('./_iobject');
+var defined = require('./_defined');
+module.exports = function (it) {
   return IObject(defined(it));
 };
   })();
@@ -2717,9 +2754,9 @@ require.register("core-js/library/modules/_to-length.js", function(exports, requ
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     // 7.1.15 ToLength
-var toInteger = require('./_to-integer')
-  , min       = Math.min;
-module.exports = function(it){
+var toInteger = require('./_to-integer');
+var min = Math.min;
+module.exports = function (it) {
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
   })();
@@ -2730,7 +2767,7 @@ require.register("core-js/library/modules/_to-object.js", function(exports, requ
   (function() {
     // 7.1.13 ToObject(argument)
 var defined = require('./_defined');
-module.exports = function(it){
+module.exports = function (it) {
   return Object(defined(it));
 };
   })();
@@ -2743,12 +2780,12 @@ require.register("core-js/library/modules/_to-primitive.js", function(exports, r
 var isObject = require('./_is-object');
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
 // and the second argument - flag - preferred type is a string
-module.exports = function(it, S){
-  if(!isObject(it))return it;
+module.exports = function (it, S) {
+  if (!isObject(it)) return it;
   var fn, val;
-  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
-  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
-  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
   throw TypeError("Can't convert object to primitive value");
 };
   })();
@@ -2757,9 +2794,9 @@ module.exports = function(it, S){
 require.register("core-js/library/modules/_uid.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var id = 0
-  , px = Math.random();
-module.exports = function(key){
+    var id = 0;
+var px = Math.random();
+module.exports = function (key) {
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
   })();
@@ -2768,12 +2805,12 @@ module.exports = function(key){
 require.register("core-js/library/modules/_wks.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var store      = require('./_shared')('wks')
-  , uid        = require('./_uid')
-  , Symbol     = require('./_global').Symbol
-  , USE_SYMBOL = typeof Symbol == 'function';
+    var store = require('./_shared')('wks');
+var uid = require('./_uid');
+var Symbol = require('./_global').Symbol;
+var USE_SYMBOL = typeof Symbol == 'function';
 
-var $exports = module.exports = function(name){
+var $exports = module.exports = function (name) {
   return store[name] || (store[name] =
     USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
 };
@@ -2785,11 +2822,11 @@ $exports.store = store;
 require.register("core-js/library/modules/core.get-iterator-method.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var classof   = require('./_classof')
-  , ITERATOR  = require('./_wks')('iterator')
-  , Iterators = require('./_iterators');
-module.exports = require('./_core').getIteratorMethod = function(it){
-  if(it != undefined)return it[ITERATOR]
+    var classof = require('./_classof');
+var ITERATOR = require('./_wks')('iterator');
+var Iterators = require('./_iterators');
+module.exports = require('./_core').getIteratorMethod = function (it) {
+  if (it != undefined) return it[ITERATOR]
     || it['@@iterator']
     || Iterators[classof(it)];
 };
@@ -2799,11 +2836,11 @@ module.exports = require('./_core').getIteratorMethod = function(it){
 require.register("core-js/library/modules/core.get-iterator.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
-    var anObject = require('./_an-object')
-  , get      = require('./core.get-iterator-method');
-module.exports = require('./_core').getIterator = function(it){
+    var anObject = require('./_an-object');
+var get = require('./core.get-iterator-method');
+module.exports = require('./_core').getIterator = function (it) {
   var iterFn = get(it);
-  if(typeof iterFn != 'function')throw TypeError(it + ' is not iterable!');
+  if (typeof iterFn != 'function') throw TypeError(it + ' is not iterable!');
   return anObject(iterFn.call(it));
 };
   })();
@@ -2813,30 +2850,30 @@ require.register("core-js/library/modules/es6.array.iterator.js", function(expor
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     'use strict';
-var addToUnscopables = require('./_add-to-unscopables')
-  , step             = require('./_iter-step')
-  , Iterators        = require('./_iterators')
-  , toIObject        = require('./_to-iobject');
+var addToUnscopables = require('./_add-to-unscopables');
+var step = require('./_iter-step');
+var Iterators = require('./_iterators');
+var toIObject = require('./_to-iobject');
 
 // 22.1.3.4 Array.prototype.entries()
 // 22.1.3.13 Array.prototype.keys()
 // 22.1.3.29 Array.prototype.values()
 // 22.1.3.30 Array.prototype[@@iterator]()
-module.exports = require('./_iter-define')(Array, 'Array', function(iterated, kind){
+module.exports = require('./_iter-define')(Array, 'Array', function (iterated, kind) {
   this._t = toIObject(iterated); // target
   this._i = 0;                   // next index
   this._k = kind;                // kind
 // 22.1.5.2.1 %ArrayIteratorPrototype%.next()
-}, function(){
-  var O     = this._t
-    , kind  = this._k
-    , index = this._i++;
-  if(!O || index >= O.length){
+}, function () {
+  var O = this._t;
+  var kind = this._k;
+  var index = this._i++;
+  if (!O || index >= O.length) {
     this._t = undefined;
     return step(1);
   }
-  if(kind == 'keys'  )return step(0, index);
-  if(kind == 'values')return step(0, O[index]);
+  if (kind == 'keys') return step(0, index);
+  if (kind == 'values') return step(0, O[index]);
   return step(0, [index, O[index]]);
 }, 'values');
 
@@ -2849,25 +2886,40 @@ addToUnscopables('entries');
   })();
 });
 
+require.register("core-js/library/modules/es6.object.keys.js", function(exports, require, module) {
+  require = __makeRelativeRequire(require, {}, "core-js");
+  (function() {
+    // 19.1.2.14 Object.keys(O)
+var toObject = require('./_to-object');
+var $keys = require('./_object-keys');
+
+require('./_object-sap')('keys', function () {
+  return function keys(it) {
+    return $keys(toObject(it));
+  };
+});
+  })();
+});
+
 require.register("core-js/library/modules/es6.string.iterator.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     'use strict';
-var $at  = require('./_string-at')(true);
+var $at = require('./_string-at')(true);
 
 // 21.1.3.27 String.prototype[@@iterator]()
-require('./_iter-define')(String, 'String', function(iterated){
+require('./_iter-define')(String, 'String', function (iterated) {
   this._t = String(iterated); // target
   this._i = 0;                // next index
 // 21.1.5.2.1 %StringIteratorPrototype%.next()
-}, function(){
-  var O     = this._t
-    , index = this._i
-    , point;
-  if(index >= O.length)return {value: undefined, done: true};
+}, function () {
+  var O = this._t;
+  var index = this._i;
+  var point;
+  if (index >= O.length) return { value: undefined, done: true };
   point = $at(O, index);
   this._i += point.length;
-  return {value: point, done: false};
+  return { value: point, done: false };
 });
   })();
 });
@@ -2876,16 +2928,22 @@ require.register("core-js/library/modules/web.dom.iterable.js", function(exports
   require = __makeRelativeRequire(require, {}, "core-js");
   (function() {
     require('./es6.array.iterator');
-var global        = require('./_global')
-  , hide          = require('./_hide')
-  , Iterators     = require('./_iterators')
-  , TO_STRING_TAG = require('./_wks')('toStringTag');
+var global = require('./_global');
+var hide = require('./_hide');
+var Iterators = require('./_iterators');
+var TO_STRING_TAG = require('./_wks')('toStringTag');
 
-for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
-  var NAME       = collections[i]
-    , Collection = global[NAME]
-    , proto      = Collection && Collection.prototype;
-  if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
+var DOMIterables = ('CSSRuleList,CSSStyleDeclaration,CSSValueList,ClientRectList,DOMRectList,DOMStringList,' +
+  'DOMTokenList,DataTransferItemList,FileList,HTMLAllCollection,HTMLCollection,HTMLFormElement,HTMLSelectElement,' +
+  'MediaList,MimeTypeArray,NamedNodeMap,NodeList,PaintRequestList,Plugin,PluginArray,SVGLengthList,SVGNumberList,' +
+  'SVGPathSegList,SVGPointList,SVGStringList,SVGTransformList,SourceBufferList,StyleSheetList,TextTrackCueList,' +
+  'TextTrackList,TouchList').split(',');
+
+for (var i = 0; i < DOMIterables.length; i++) {
+  var NAME = DOMIterables[i];
+  var Collection = global[NAME];
+  var proto = Collection && Collection.prototype;
+  if (proto && !proto[TO_STRING_TAG]) hide(proto, TO_STRING_TAG, NAME);
   Iterators[NAME] = Iterators.Array;
 }
   })();
@@ -17781,6 +17839,110 @@ function superscript(state, silent) {
 module.exports = function sup_plugin(md) {
   md.inline.ruler.after('emphasis', 'sup', superscript);
 };
+  })();
+});
+
+require.register("markdown-it-task-lists/index.js", function(exports, require, module) {
+  require = __makeRelativeRequire(require, {}, "markdown-it-task-lists");
+  (function() {
+    // Markdown-it plugin to render GitHub-style task lists; see
+//
+// https://github.com/blog/1375-task-lists-in-gfm-issues-pulls-comments
+// https://github.com/blog/1825-task-lists-in-all-markdown-documents
+
+var disableCheckboxes = true;
+var useLabelWrapper = false;
+
+module.exports = function(md, options) {
+	if (options) {
+		disableCheckboxes = !options.enabled;
+		useLabelWrapper = !!options.label;
+	}
+
+	md.core.ruler.after('inline', 'github-task-lists', function(state) {
+		var tokens = state.tokens;
+		for (var i = 2; i < tokens.length; i++) {
+			if (isTodoItem(tokens, i)) {
+				todoify(tokens[i], state.Token);
+				attrSet(tokens[i-2], 'class', 'task-list-item' + (!disableCheckboxes ? ' enabled' : ''));
+				attrSet(tokens[parentToken(tokens, i-2)], 'class', 'contains-task-list');
+			}
+		}
+	});
+};
+
+function attrSet(token, name, value) {
+	var index = token.attrIndex(name);
+	var attr = [name, value];
+
+	if (index < 0) {
+		token.attrPush(attr);
+	} else {
+		token.attrs[index] = attr;
+	}
+}
+
+function parentToken(tokens, index) {
+	var targetLevel = tokens[index].level - 1;
+	for (var i = index - 1; i >= 0; i--) {
+		if (tokens[i].level === targetLevel) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+function isTodoItem(tokens, index) {
+	return isInline(tokens[index]) &&
+	       isParagraph(tokens[index - 1]) &&
+	       isListItem(tokens[index - 2]) &&
+	       startsWithTodoMarkdown(tokens[index]);
+}
+
+function todoify(token, TokenConstructor) {
+	token.children.unshift(makeCheckbox(token, TokenConstructor));
+	token.children[1].content = token.children[1].content.slice(3);
+	token.content = token.content.slice(3);
+
+	if (useLabelWrapper) {
+		token.children.unshift(beginLabel(TokenConstructor));
+		token.children.push(endLabel(TokenConstructor));
+	}
+}
+
+function makeCheckbox(token, TokenConstructor) {
+	var checkbox = new TokenConstructor('html_inline', '', 0);
+	var disabledAttr = disableCheckboxes ? ' disabled="" ' : '';
+	if (token.content.indexOf('[ ] ') === 0) {
+		checkbox.content = '<input class="task-list-item-checkbox"' + disabledAttr + 'type="checkbox">';
+	} else if (token.content.indexOf('[x] ') === 0 || token.content.indexOf('[X] ') === 0) {
+		checkbox.content = '<input class="task-list-item-checkbox" checked=""' + disabledAttr + 'type="checkbox">';
+	}
+	return checkbox;
+}
+
+// these next two functions are kind of hacky; probably should really be a
+// true block-level token with .tag=='label'
+function beginLabel(TokenConstructor) {
+	var token = new TokenConstructor('html_inline', '', 0);
+	token.content = '<label>';
+	return token;
+}
+
+function endLabel(TokenConstructor) {
+	var token = new TokenConstructor('html_inline', '', 0);
+	token.content = '</label>';
+	return token;
+}
+
+function isInline(token) { return token.type === 'inline'; }
+function isParagraph(token) { return token.type === 'paragraph_open'; }
+function isListItem(token) { return token.type === 'list_item_open'; }
+
+function startsWithTodoMarkdown(token) {
+	// leading whitespace in a list item is already trimmed off by markdown-it
+	return token.content.indexOf('[ ] ') === 0 || token.content.indexOf('[x] ') === 0 || token.content.indexOf('[X] ') === 0;
+}
   })();
 });
 
@@ -37853,21 +38015,21 @@ require.register("vue-markdown/dist/vue-markdown.common.js", function(exports, r
   require = __makeRelativeRequire(require, {}, "vue-markdown");
   (function() {
     /**
- * vue-markdown v2.1.3
+ * vue-markdown v2.2.4
  * https://github.com/miaolz123/vue-markdown
  * MIT License
  */
 
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("babel-runtime/core-js/get-iterator"), require("markdown-it"), require("markdown-it-emoji"), require("markdown-it-sub"), require("markdown-it-sup"), require("markdown-it-footnote"), require("markdown-it-deflist"), require("markdown-it-abbr"), require("markdown-it-ins"), require("markdown-it-mark"), require("markdown-it-toc-and-anchor"), require("markdown-it-katex"));
+		module.exports = factory(require("babel-runtime/core-js/get-iterator"), require("babel-runtime/core-js/object/keys"), require("markdown-it"), require("markdown-it-emoji"), require("markdown-it-sub"), require("markdown-it-sup"), require("markdown-it-footnote"), require("markdown-it-deflist"), require("markdown-it-abbr"), require("markdown-it-ins"), require("markdown-it-mark"), require("markdown-it-toc-and-anchor"), require("markdown-it-katex"), require("markdown-it-task-lists"));
 	else if(typeof define === 'function' && define.amd)
-		define(["babel-runtime/core-js/get-iterator", "markdown-it", "markdown-it-emoji", "markdown-it-sub", "markdown-it-sup", "markdown-it-footnote", "markdown-it-deflist", "markdown-it-abbr", "markdown-it-ins", "markdown-it-mark", "markdown-it-toc-and-anchor", "markdown-it-katex"], factory);
+		define(["babel-runtime/core-js/get-iterator", "babel-runtime/core-js/object/keys", "markdown-it", "markdown-it-emoji", "markdown-it-sub", "markdown-it-sup", "markdown-it-footnote", "markdown-it-deflist", "markdown-it-abbr", "markdown-it-ins", "markdown-it-mark", "markdown-it-toc-and-anchor", "markdown-it-katex", "markdown-it-task-lists"], factory);
 	else if(typeof exports === 'object')
-		exports["VueMarkdown"] = factory(require("babel-runtime/core-js/get-iterator"), require("markdown-it"), require("markdown-it-emoji"), require("markdown-it-sub"), require("markdown-it-sup"), require("markdown-it-footnote"), require("markdown-it-deflist"), require("markdown-it-abbr"), require("markdown-it-ins"), require("markdown-it-mark"), require("markdown-it-toc-and-anchor"), require("markdown-it-katex"));
+		exports["VueMarkdown"] = factory(require("babel-runtime/core-js/get-iterator"), require("babel-runtime/core-js/object/keys"), require("markdown-it"), require("markdown-it-emoji"), require("markdown-it-sub"), require("markdown-it-sup"), require("markdown-it-footnote"), require("markdown-it-deflist"), require("markdown-it-abbr"), require("markdown-it-ins"), require("markdown-it-mark"), require("markdown-it-toc-and-anchor"), require("markdown-it-katex"), require("markdown-it-task-lists"));
 	else
-		root["VueMarkdown"] = factory(root["babel-runtime/core-js/get-iterator"], root["markdown-it"], root["markdown-it-emoji"], root["markdown-it-sub"], root["markdown-it-sup"], root["markdown-it-footnote"], root["markdown-it-deflist"], root["markdown-it-abbr"], root["markdown-it-ins"], root["markdown-it-mark"], root["markdown-it-toc-and-anchor"], root["markdown-it-katex"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_7__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_9__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_11__, __WEBPACK_EXTERNAL_MODULE_12__) {
+		root["VueMarkdown"] = factory(root["babel-runtime/core-js/get-iterator"], root["babel-runtime/core-js/object/keys"], root["markdown-it"], root["markdown-it-emoji"], root["markdown-it-sub"], root["markdown-it-sup"], root["markdown-it-footnote"], root["markdown-it-deflist"], root["markdown-it-abbr"], root["markdown-it-ins"], root["markdown-it-mark"], root["markdown-it-toc-and-anchor"], root["markdown-it-katex"], root["markdown-it-task-lists"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_7__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_9__, __WEBPACK_EXTERNAL_MODULE_10__, __WEBPACK_EXTERNAL_MODULE_11__, __WEBPACK_EXTERNAL_MODULE_12__, __WEBPACK_EXTERNAL_MODULE_13__, __WEBPACK_EXTERNAL_MODULE_14__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -37912,7 +38074,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -37924,49 +38086,57 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _getIterator3 = _interopRequireDefault(_getIterator2);
 
-	var _markdownIt = __webpack_require__(2);
+	var _keys = __webpack_require__(2);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _markdownIt = __webpack_require__(3);
 
 	var _markdownIt2 = _interopRequireDefault(_markdownIt);
 
-	var _markdownItEmoji = __webpack_require__(3);
+	var _markdownItEmoji = __webpack_require__(4);
 
 	var _markdownItEmoji2 = _interopRequireDefault(_markdownItEmoji);
 
-	var _markdownItSub = __webpack_require__(4);
+	var _markdownItSub = __webpack_require__(5);
 
 	var _markdownItSub2 = _interopRequireDefault(_markdownItSub);
 
-	var _markdownItSup = __webpack_require__(5);
+	var _markdownItSup = __webpack_require__(6);
 
 	var _markdownItSup2 = _interopRequireDefault(_markdownItSup);
 
-	var _markdownItFootnote = __webpack_require__(6);
+	var _markdownItFootnote = __webpack_require__(7);
 
 	var _markdownItFootnote2 = _interopRequireDefault(_markdownItFootnote);
 
-	var _markdownItDeflist = __webpack_require__(7);
+	var _markdownItDeflist = __webpack_require__(8);
 
 	var _markdownItDeflist2 = _interopRequireDefault(_markdownItDeflist);
 
-	var _markdownItAbbr = __webpack_require__(8);
+	var _markdownItAbbr = __webpack_require__(9);
 
 	var _markdownItAbbr2 = _interopRequireDefault(_markdownItAbbr);
 
-	var _markdownItIns = __webpack_require__(9);
+	var _markdownItIns = __webpack_require__(10);
 
 	var _markdownItIns2 = _interopRequireDefault(_markdownItIns);
 
-	var _markdownItMark = __webpack_require__(10);
+	var _markdownItMark = __webpack_require__(11);
 
 	var _markdownItMark2 = _interopRequireDefault(_markdownItMark);
 
-	var _markdownItTocAndAnchor = __webpack_require__(11);
+	var _markdownItTocAndAnchor = __webpack_require__(12);
 
 	var _markdownItTocAndAnchor2 = _interopRequireDefault(_markdownItTocAndAnchor);
 
-	var _markdownItKatex = __webpack_require__(12);
+	var _markdownItKatex = __webpack_require__(13);
 
 	var _markdownItKatex2 = _interopRequireDefault(_markdownItKatex);
+
+	var _markdownItTaskLists = __webpack_require__(14);
+
+	var _markdownItTaskLists2 = _interopRequireDefault(_markdownItTaskLists);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37994,6 +38164,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      default: ''
 	    },
 	    show: {
+	      type: Boolean,
+	      default: true
+	    },
+	    highlight: {
 	      type: Boolean,
 	      default: true
 	    },
@@ -38033,6 +38207,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      type: String,
 	      default: 'table'
 	    },
+	    taskLists: {
+	      type: Boolean,
+	      default: true
+	    },
 	    toc: {
 	      type: Boolean,
 	      default: false
@@ -38070,6 +38248,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    tocAnchorLinkClass: {
 	      type: String,
 	      default: 'toc-anchor-link'
+	    },
+	    anchorAttributes: {
+	      type: Object,
+	      default: function _default() {
+	        return {};
+	      }
+	    },
+	    prerender: {
+	      type: Function,
+	      default: function _default(sourceData) {
+	        return sourceData;
+	      }
+	    },
+	    postrender: {
+	      type: Function,
+	      default: function _default(htmlData) {
+	        return htmlData;
+	      }
 	    }
 	  },
 
@@ -38082,7 +38278,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  render: function render(createElement) {
 	    var _this = this;
 
-	    this.md = new _markdownIt2.default().use(_markdownItSub2.default).use(_markdownItSup2.default).use(_markdownItFootnote2.default).use(_markdownItDeflist2.default).use(_markdownItAbbr2.default).use(_markdownItIns2.default).use(_markdownItMark2.default).use(_markdownItKatex2.default, { "throwOnError": false, "errorColor": " #cc0000" });
+	    this.md = new _markdownIt2.default().use(_markdownItSub2.default).use(_markdownItSup2.default).use(_markdownItFootnote2.default).use(_markdownItDeflist2.default).use(_markdownItAbbr2.default).use(_markdownItIns2.default).use(_markdownItMark2.default).use(_markdownItKatex2.default, { "throwOnError": false, "errorColor": " #cc0000" }).use(_markdownItTaskLists2.default, { enabled: this.taskLists });
 
 	    if (this.emoji) {
 	      this.md.use(_markdownItEmoji2.default);
@@ -38099,6 +38295,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    this.md.renderer.rules.table_open = function () {
 	      return '<table class="' + _this.tableClass + '">\n';
+	    };
+	    var defaultLinkRenderer = this.md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
+	      return self.renderToken(tokens, idx, options);
+	    };
+	    this.md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+	      (0, _keys2.default)(_this.anchorAttributes).map(function (attribute) {
+	        var aIndex = tokens[idx].attrIndex(attribute);
+	        var value = _this.anchorAttributes[attribute];
+	        if (aIndex < 0) {
+	          tokens[idx].attrPush([attribute, value]); // add new attribute
+	        } else {
+	          tokens[idx].attrs[aIndex][1] = value;
+	        }
+	      });
+	      return defaultLinkRenderer(tokens, idx, options, env, self);
 	    };
 
 	    if (this.toc) {
@@ -38122,7 +38333,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	      });
 	    }
-	    var outHtml = this.show ? this.md.render(this.sourceData) : '';
+
+	    var outHtml = this.show ? this.md.render(this.prerender(this.sourceData)) : '';
+	    outHtml = this.postrender(outHtml);
 
 	    this.$emit('rendered', outHtml);
 	    return createElement('div', {
@@ -38163,7 +38376,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    this.$watch('source', function () {
-	      _this2.sourceData = _this2.source;
+	      _this2.sourceData = _this2.prerender(_this2.source);
 	      _this2.$forceUpdate();
 	    });
 
@@ -38175,79 +38388,91 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	};
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_4__;
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_5__;
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_6__;
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_8__;
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_9__;
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_10__;
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_11__;
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_12__;
 
-/***/ }
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_13__;
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_14__;
+
+/***/ })
 /******/ ])
 });
 ;
@@ -42345,7 +42570,7 @@ require.register("vue/dist/vue.common.js", function(exports, require, module) {
   require = __makeRelativeRequire(require, {}, "vue");
   (function() {
     /*!
- * Vue.js v2.4.1
+ * Vue.js v2.4.2
  * (c) 2014-2017 Evan You
  * Released under the MIT License.
  */
@@ -42375,7 +42600,11 @@ function isFalse (v) {
  * Check if value is primitive
  */
 function isPrimitive (value) {
-  return typeof value === 'string' || typeof value === 'number'
+  return (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean'
+  )
 }
 
 /**
@@ -42598,14 +42827,30 @@ function genStaticKeys (modules) {
  * if they are plain objects, do they have the same shape?
  */
 function looseEqual (a, b) {
+  if (a === b) { return true }
   var isObjectA = isObject(a);
   var isObjectB = isObject(b);
   if (isObjectA && isObjectB) {
     try {
-      return JSON.stringify(a) === JSON.stringify(b)
+      var isArrayA = Array.isArray(a);
+      var isArrayB = Array.isArray(b);
+      if (isArrayA && isArrayB) {
+        return a.length === b.length && a.every(function (e, i) {
+          return looseEqual(e, b[i])
+        })
+      } else if (!isArrayA && !isArrayB) {
+        var keysA = Object.keys(a);
+        var keysB = Object.keys(b);
+        return keysA.length === keysB.length && keysA.every(function (key) {
+          return looseEqual(a[key], b[key])
+        })
+      } else {
+        /* istanbul ignore next */
+        return false
+      }
     } catch (e) {
-      // possible circular reference
-      return a === b
+      /* istanbul ignore next */
+      return false
     }
   } else if (!isObjectA && !isObjectB) {
     return String(a) === String(b)
@@ -43470,7 +43715,7 @@ function mergeDataOrFn (
     return function mergedDataFn () {
       return mergeData(
         typeof childVal === 'function' ? childVal.call(this) : childVal,
-        parentVal.call(this)
+        typeof parentVal === 'function' ? parentVal.call(this) : parentVal
       )
     }
   } else if (parentVal || childVal) {
@@ -43586,11 +43831,10 @@ strats.props =
 strats.methods =
 strats.inject =
 strats.computed = function (parentVal, childVal) {
-  if (!childVal) { return Object.create(parentVal || null) }
   if (!parentVal) { return childVal }
   var ret = Object.create(null);
   extend(ret, parentVal);
-  extend(ret, childVal);
+  if (childVal) { extend(ret, childVal); }
   return ret
 };
 strats.provide = mergeDataOrFn;
@@ -45536,17 +45780,14 @@ function initComputed (vm, computed) {
   for (var key in computed) {
     var userDef = computed[key];
     var getter = typeof userDef === 'function' ? userDef : userDef.get;
-    if ('development' !== 'production') {
-      if (getter === undefined) {
-        warn(
-          ("No getter function has been defined for computed property \"" + key + "\"."),
-          vm
-        );
-        getter = noop;
-      }
+    if ('development' !== 'production' && getter == null) {
+      warn(
+        ("Getter is missing for computed property \"" + key + "\"."),
+        vm
+      );
     }
     // create internal watcher for the computed property.
-    watchers[key] = new Watcher(vm, getter, noop, computedWatcherOptions);
+    watchers[key] = new Watcher(vm, getter || noop, noop, computedWatcherOptions);
 
     // component-defined computed properties are already defined on the
     // component prototype. We only need to define computed properties defined
@@ -45576,6 +45817,15 @@ function defineComputed (target, key, userDef) {
     sharedPropertyDefinition.set = userDef.set
       ? userDef.set
       : noop;
+  }
+  if ('development' !== 'production' &&
+      sharedPropertyDefinition.set === noop) {
+    sharedPropertyDefinition.set = function () {
+      warn(
+        ("Computed property \"" + key + "\" was assigned to but it has no setter."),
+        this
+      );
+    };
   }
   Object.defineProperty(target, key, sharedPropertyDefinition);
 }
@@ -45748,7 +45998,7 @@ function resolveInject (inject, vm) {
         }
         source = source.$parent;
       }
-      if ('development' !== 'production' && !hasOwn(result, key)) {
+      if ('development' !== 'production' && !source) {
         warn(("Injection \"" + key + "\" not found"), vm);
       }
     }
@@ -45941,8 +46191,12 @@ function createComponent (
     return createFunctionalComponent(Ctor, propsData, data, context, children)
   }
 
-  // keep listeners
+  // extract listeners, since these needs to be treated as
+  // child component listeners instead of DOM listeners
   var listeners = data.on;
+  // replace with listeners with .native modifier
+  // so it gets processed during parent component patch.
+  data.on = data.nativeOn;
 
   if (isTrue(Ctor.options.abstract)) {
     // abstract components do not keep anything
@@ -46405,12 +46659,12 @@ function initRender (vm) {
     defineReactive$$1(vm, '$attrs', parentData && parentData.attrs, function () {
       !isUpdatingChildComponent && warn("$attrs is readonly.", vm);
     }, true);
-    defineReactive$$1(vm, '$listeners', parentData && parentData.on, function () {
+    defineReactive$$1(vm, '$listeners', vm.$options._parentListeners, function () {
       !isUpdatingChildComponent && warn("$listeners is readonly.", vm);
     }, true);
   } else {
     defineReactive$$1(vm, '$attrs', parentData && parentData.attrs, null, true);
-    defineReactive$$1(vm, '$listeners', parentData && parentData.on, null, true);
+    defineReactive$$1(vm, '$listeners', vm.$options._parentListeners, null, true);
   }
 }
 
@@ -46974,7 +47228,7 @@ Object.defineProperty(Vue$3.prototype, '$ssrContext', {
   }
 });
 
-Vue$3.version = '2.4.1';
+Vue$3.version = '2.4.2';
 
 /*  */
 
@@ -48634,7 +48888,7 @@ function genCheckboxModel (
     'if(Array.isArray($$a)){' +
       "var $$v=" + (number ? '_n(' + valueBinding + ')' : valueBinding) + "," +
           '$$i=_i($$a,$$v);' +
-      "if($$c){$$i<0&&(" + value + "=$$a.concat($$v))}" +
+      "if($$el.checked){$$i<0&&(" + value + "=$$a.concat($$v))}" +
       "else{$$i>-1&&(" + value + "=$$a.slice(0,$$i).concat($$a.slice($$i+1)))}" +
     "}else{" + (genAssignmentCode(value, '$$c')) + "}",
     null, true
@@ -48770,14 +49024,11 @@ function remove$2 (
 }
 
 function updateDOMListeners (oldVnode, vnode) {
-  var isComponentRoot = isDef(vnode.componentOptions);
-  var oldOn = isComponentRoot ? oldVnode.data.nativeOn : oldVnode.data.on;
-  var on = isComponentRoot ? vnode.data.nativeOn : vnode.data.on;
-  if (isUndef(oldOn) && isUndef(on)) {
+  if (isUndef(oldVnode.data.on) && isUndef(vnode.data.on)) {
     return
   }
-  on = on || {};
-  oldOn = oldOn || {};
+  var on = vnode.data.on || {};
+  var oldOn = oldVnode.data.on || {};
   target$1 = vnode.elm;
   normalizeEvents(on);
   updateListeners(on, oldOn, add$1, remove$2, vnode.context);
@@ -48851,7 +49102,11 @@ function shouldUpdateValue (
 function isDirty (elm, checkVal) {
   // return true when textbox (.number and .trim) loses focus and its value is
   // not equal to the updated value
-  return document.activeElement !== elm && elm.value !== checkVal
+  var notInFocus = true;
+  // #6157
+  // work around IE bug when accessing document.activeElement in an iframe
+  try { notInFocus = document.activeElement !== elm; } catch (e) {}
+  return notInFocus && elm.value !== checkVal
 }
 
 function isInputChanged (elm, newVal) {
@@ -49631,6 +49886,7 @@ var model$1 = {
       if (isIE || isEdge) {
         setTimeout(cb, 0);
       }
+      el._vOptions = [].map.call(el.options, getValue);
     } else if (vnode.tag === 'textarea' || isTextInputType(el.type)) {
       el._vModifiers = binding.modifiers;
       if (!binding.modifiers.lazy) {
@@ -49657,10 +49913,9 @@ var model$1 = {
       // it's possible that the value is out-of-sync with the rendered options.
       // detect such cases and filter out values that no longer has a matching
       // option in the DOM.
-      var needReset = el.multiple
-        ? binding.value.some(function (v) { return hasNoMatchingOption(v, el.options); })
-        : binding.value !== binding.oldValue && hasNoMatchingOption(binding.value, el.options);
-      if (needReset) {
+      var prevOptions = el._vOptions;
+      var curOptions = el._vOptions = [].map.call(el.options, getValue);
+      if (curOptions.some(function (o, i) { return !looseEqual(o, prevOptions[i]); })) {
         trigger(el, 'change');
       }
     }
@@ -49698,15 +49953,6 @@ function setSelected (el, binding, vm) {
   if (!isMultiple) {
     el.selectedIndex = -1;
   }
-}
-
-function hasNoMatchingOption (value, options) {
-  for (var i = 0, l = options.length; i < l; i++) {
-    if (looseEqual(getValue(options[i]), value)) {
-      return false
-    }
-  }
-  return true
 }
 
 function getValue (option) {
@@ -49749,7 +49995,7 @@ var show = {
     var transition$$1 = vnode.data && vnode.data.transition;
     var originalDisplay = el.__vOriginalDisplay =
       el.style.display === 'none' ? '' : el.style.display;
-    if (value && transition$$1 && !isIE9) {
+    if (value && transition$$1) {
       vnode.data.show = true;
       enter(vnode, function () {
         el.style.display = originalDisplay;
@@ -49767,7 +50013,7 @@ var show = {
     if (value === oldValue) { return }
     vnode = locateNode(vnode);
     var transition$$1 = vnode.data && vnode.data.transition;
-    if (transition$$1 && !isIE9) {
+    if (transition$$1) {
       vnode.data.show = true;
       if (value) {
         enter(vnode, function () {
@@ -50508,9 +50754,6 @@ function parseHTML (html, options) {
     last = html;
     // Make sure we're not in a plaintext content element like script/style
     if (!lastTag || !isPlainTextElement(lastTag)) {
-      if (shouldIgnoreFirstNewline(lastTag, html)) {
-        advance(1);
-      }
       var textEnd = html.indexOf('<');
       if (textEnd === 0) {
         // Comment:
@@ -50556,6 +50799,9 @@ function parseHTML (html, options) {
         var startTagMatch = parseStartTag();
         if (startTagMatch) {
           handleStartTag(startTagMatch);
+          if (shouldIgnoreFirstNewline(lastTag, html)) {
+            advance(1);
+          }
           continue
         }
       }
@@ -51216,8 +51462,8 @@ function processAttrs (el) {
             );
           }
         }
-        if (!el.component && (
-          isProp || platformMustUseProp(el.tag, el.attrsMap.type, name)
+        if (isProp || (
+          !el.component && platformMustUseProp(el.tag, el.attrsMap.type, name)
         )) {
           addProp(el, name, value);
         } else {
@@ -52003,7 +52249,7 @@ function genText (text) {
 }
 
 function genComment (comment) {
-  return ("_e('" + (comment.text) + "')")
+  return ("_e(" + (JSON.stringify(comment.text)) + ")")
 }
 
 function genSlot (el, state) {
@@ -52482,6 +52728,10 @@ var _elixir = require("./pages/elixir.vue");
 
 var _elixir2 = _interopRequireDefault(_elixir);
 
+var _microservices = require("./pages/microservices.vue");
+
+var _microservices2 = _interopRequireDefault(_microservices);
+
 var _post = require("./pages/post.vue");
 
 var _post2 = _interopRequireDefault(_post);
@@ -52490,7 +52740,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _vue2.default.use(_vueRouter2.default);
 
-var routes = [{ path: "/", component: _index2.default, name: "index" }, { path: "/posts/elixir", component: _elixir2.default, name: "elixir" }, { path: "/post/:language/:slug", component: _post2.default, name: "post" }];
+var routes = [{ path: "/", component: _index2.default, name: "index" },
+//{ path: "/posts/elixir", component: Elixir, name: "elixir" },
+{ path: "/posts/microservices", component: _microservices2.default, name: "microservices" }, { path: "/posts/machine-learning", component: _microservices2.default, name: "machine-learning" }, { path: "/posts/deep-learning", component: _microservices2.default, name: "deep-learning" }, { path: "/post/:language/:slug", component: _post2.default, name: "post" }];
 
 var router = new _vueRouter2.default({
   routes: routes
@@ -52528,7 +52780,7 @@ exports.default = Navbar;
 if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
-__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"navbar-fixed"},[_c('nav',{staticClass:"deep-purple darken-4 nav-extended"},[_c('div',{staticClass:"container"},[_c('div',{staticClass:"nav-wrapper"},[_c('router-link',{staticClass:"brand-logo center",attrs:{"to":{ name: 'index' },"id":"brand"}},[_vm._v(" Iuri L. Machado ")])],1),_vm._v(" "),_c('div',{staticClass:"nav-content"},[_c('ul',{staticClass:"tabs tabs-transparent center"},[_c('li',{staticClass:"tab"},[_c('router-link',{attrs:{"to":{ name: 'index' }}},[_vm._v("Sobre")])],1),_vm._v(" "),_c('li',{staticClass:"tab"},[_c('router-link',{attrs:{"to":{ name: 'elixir' }}},[_vm._v("Elixir ")])],1)])])])])])}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"navbar-fixed"},[_c('nav',{staticClass:"deep-purple darken-4 nav-extended"},[_c('div',{staticClass:"container"},[_c('div',{staticClass:"nav-wrapper"},[_c('router-link',{staticClass:"brand-logo center",attrs:{"to":{ name: 'index' },"id":"brand"}},[_vm._v(" Iuri L. Machado ")])],1),_vm._v(" "),_c('div',{staticClass:"nav-content"},[_c('ul',{staticClass:"tabs tabs-transparent center"},[_c('li',{staticClass:"tab"},[_c('router-link',{attrs:{"to":{ name: 'index' }}},[_vm._v("Início")])],1),_vm._v(" "),_c('li',{staticClass:"tab"},[_c('router-link',{attrs:{"to":{ name: 'microservices' }}},[_vm._v("Microserviços "),_c('small',[_vm._v("com python")])])],1)])])])])])}
 __vue__options__.staticRenderFns = []
 __vue__options__._scopeId = "data-v-f90a1dea"
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
@@ -52655,7 +52907,7 @@ if (module.exports.__esModule) module.exports = module.exports.default
 var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
 if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
 __vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('navbar'),_vm._v(" "),_c('br'),_c('br'),_c('br'),_c('br'),_c('br'),_vm._v(" "),_c('div',{staticClass:"container"},[_vm._m(0),_vm._v(" "),_c('div',{staticClass:"row"},[_vm._m(1),_vm._v(" "),_c('div',{staticClass:"col s12 m1"}),_vm._v(" "),_c('div',{staticClass:"col s12 m4 center"},[_c('twitter')],1)])]),_vm._v(" "),_c('br'),_vm._v(" "),_c('div',{staticClass:"center"},[_c('p',[_c('b',[_vm._v("© "+_vm._s(_vm.year)+". All rights reserved.")])])])],1)}
-__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row"},[_c('div',{staticClass:"col s12 center"})])},function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"col s12 m7"},[_c('h5',[_vm._v("Sobre mim")]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('p',[_vm._v("Olá, sou "),_c('b',[_vm._v("Iuri Lugão Machado")]),_vm._v(", e desenvolvo aplicações que demandam \n          "),_c('i',[_vm._v("alta performance")]),_vm._v(", "),_c('i',[_vm._v("baixa latência")]),_vm._v(", "),_c('i',[_vm._v("tolerância a falhas")]),_vm._v(" e \n          "),_c('i',[_vm._v("escalabilidade")]),_vm._v(". ")]),_vm._v(" "),_c('p',[_vm._v("Conhecido na internet como "),_c('b',[_c('i',[_vm._v("@imetallica")])]),_vm._v(", divido meu tempo entre \n           aprender e criar coisas novas. Acredito que novas tecnologias irão transformar\n           empresas, bem como aumentar a velocidade com que desenvolvemos e a facilidade \n           que damos manutenção ao nossos produtos.")]),_vm._v(" "),_c('p',[_vm._v("Possuo mais de 10 anos de experiência em desenvolvimento de software e já\n           desenvolvi projetos para o Brasil e o exterior.")]),_vm._v(" "),_c('br'),_vm._v(" "),_c('h5',[_vm._v("Como posso ajudar?")]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('ul',[_c('li',[_c('p',[_vm._v("1. Arquitetando soluções e prestando consultoria em Erlang e Elixir, bem como \n            oferecendo treinamento nessas tecnologias e em programação funcional.")])]),_vm._v(" "),_c('li',[_c('p',[_vm._v("2. Migrando aplicações monolíticas para microserviços, aumentando potencialmente\n            a escalabilidade do seu produto.")])]),_vm._v(" "),_c('li',[_c('p',[_vm._v("3. Oferecendo treinamento e consultoria com melhores práticas com bancos de dados\n            orientados a documentos e grafos.")])])]),_vm._v(" "),_c('br'),_vm._v(" "),_c('div',{staticClass:"center"},[_c('hr'),_vm._v(" "),_c('p',[_vm._v("Caso a ideia de trabalhar comigo lhe agrada, precisaremos conversar para que eu \n             possa entender melhor o seu problema e como posso contribuir para auxiliar a você\n             ou sua empresa.")]),_vm._v(" "),_c('br'),_vm._v(" "),_c('a',{staticClass:"btn deep-purple darken-4",attrs:{"href":"mailto:imetallica@hotmail.com","target":"_top"}},[_vm._v(" Entre em contato ")])])])}]
+__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"row"},[_c('div',{staticClass:"col s12 center"})])},function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"col s12 m7"},[_c('h5',[_vm._v("Sobre mim")]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('p',[_vm._v("Olá, sou "),_c('b',[_vm._v("Iuri Lugão Machado")]),_vm._v(", e desenvolvo aplicações que demandam \n          "),_c('i',[_vm._v("alta performance")]),_vm._v(", "),_c('i',[_vm._v("baixa latência")]),_vm._v(", "),_c('i',[_vm._v("tolerância a falhas")]),_vm._v(" e \n          "),_c('i',[_vm._v("escalabilidade")]),_vm._v(". ")]),_vm._v(" "),_c('p',[_vm._v("Conhecido na internet como "),_c('b',[_c('i',[_vm._v("@imetallica")])]),_vm._v(", divido meu tempo entre \n           aprender e criar coisas novas. Acredito que novas tecnologias irão transformar\n           empresas, bem como aumentar a velocidade com que desenvolvemos e a facilidade \n           que damos manutenção ao nossos produtos.")]),_vm._v(" "),_c('p',[_vm._v("\n          Possuo mais de 10 anos de experiência em desenvolvimento de software e já\n          desenvolvi projetos para o Brasil e o exterior.\n        ")]),_vm._v(" "),_c('p',[_vm._v("\n          Atualmente aprendendo Machine Learning e Deep Learning. Acredito que essas\n          tecnologias irão moldar o futuro e prover o diferencial de competitividade\n          para muitas empresas já estabelecidas e startups. \n        ")]),_vm._v(" "),_c('br'),_vm._v(" "),_c('h5',[_vm._v("Como posso ajudar?")]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('ol',[_c('li',[_c('p',[_vm._v("\n              Arquitetando soluções e prestando consultoria. Possuo vasta experiência\n              desenvolvendo aplicações escaláveis e distribuídas em Python e \n              Elixir/Erlang.\n            ")])]),_vm._v(" "),_c('li',[_c('p',[_vm._v("\n              Migrando aplicações monolíticas para microserviços. Nos dias de hoje, é\n              cada vez mais rápido o ciclo de desenvolvimento -> teste -> deploy, para\n              rapidamente responder a possíveis erros e requerimentos diversos. \n              Microserviços nos permitem tanto escalar pedaços de uma aplicação quanto\n              realizar deploy muito mais rapidamente de uma aplicação, reduzindo custos.\n              Bem como, aumentar a velocidade com que novas funcionalidades são adicionadas\n              ao seu produto.\n            ")])]),_vm._v(" "),_c('li',[_c('p',[_vm._v("\n              Oferecendo treinamento e consultoria com melhores práticas com bancos de dados\n              orientados a documentos e grafos. Com o advento dos microserviços, o volume de\n              dados gerados pela sua aplicação aumenta, bem como a flexibilidade em utilizar\n              as melhores ferramentas para resolver o problema específico de um pedaço da sua\n              aplicação. Por exemplo, modelar um sistema que detecta fraudes em pagamentos é\n              muito mais simples de ser feito com um banco orientado a grafos que um banco \n              relacional, como MySQL ou PostgreSQL.\n            ")])])]),_vm._v(" "),_c('br'),_vm._v(" "),_c('div',{staticClass:"center"},[_c('hr'),_vm._v(" "),_c('p',[_vm._v("Caso a ideia de trabalhar comigo lhe agrada, precisaremos conversar para que eu \n             possa entender melhor o seu problema e como posso contribuir para auxiliar a você\n             ou sua empresa.")]),_vm._v(" "),_c('br'),_vm._v(" "),_c('a',{staticClass:"btn deep-purple darken-4",attrs:{"href":"mailto:imetallica@hotmail.com","target":"_top"}},[_vm._v(" Entre em contato ")])])])}]
 if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)
   if (!hotAPI.compatible) return
@@ -52664,6 +52916,49 @@ if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
     hotAPI.createRecord("data-v-1902d1ae", __vue__options__)
   } else {
     hotAPI.reload("data-v-1902d1ae", __vue__options__)
+  }
+})()}
+});
+
+;require.register("web/static/js/pages/microservices.vue", function(exports, require, module) {
+;(function(){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _navbar = require("../components/navbar.vue");
+
+var _navbar2 = _interopRequireDefault(_navbar);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  data: function data() {
+    return {
+      posts: [{ name: "[001] Introdução", path: "001-intro" }]
+    };
+  },
+
+  components: {
+    Navbar: _navbar2.default
+  }
+};
+})()
+if (module.exports.__esModule) module.exports = module.exports.default
+var __vue__options__ = (typeof module.exports === "function"? module.exports.options: module.exports)
+if (__vue__options__.functional) {console.error("[vueify] functional components are not supported and should be defined in plain js files using render functions.")}
+__vue__options__.render = function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('Navbar'),_vm._v(" "),_c('br'),_c('br'),_c('br'),_c('br'),_c('br'),_vm._v(" "),_vm._m(0)],1)}
+__vue__options__.staticRenderFns = [function render () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"container"},[_c('h5',[_vm._v("Microserviços "),_c('small',[_vm._v("com Python")])]),_vm._v(" "),_c('hr'),_vm._v(" "),_c('p',[_vm._v("Eles chegaram pra ficar. Eles ajudam a escalar, modernizar e agilizar o desenvolvimento de aplicações.")]),_vm._v(" "),_c('p',[_vm._v("\n       Aqui demonstrarei como construir sistemas distribuídos, reativos, utilizando padrões reconhecidos pela \n       indústria, utilizando sua linguagem favorita: Python.\n    ")]),_vm._v(" "),_c('br')])}]
+if (module.hot) {(function () {  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), true)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-3711e279", __vue__options__)
+  } else {
+    hotAPI.reload("data-v-3711e279", __vue__options__)
   }
 })()}
 });

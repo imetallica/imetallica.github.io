@@ -9,6 +9,7 @@ import Twitter from "./components/twitter.vue"
 
 import Index from "./pages/index.vue"
 import Elixir from "./pages/elixir.vue"
+import Microservices from "./pages/microservices.vue"
 import Post from "./pages/post.vue"
 
 
@@ -16,7 +17,10 @@ Vue.use(VueRouter)
 
 const routes = [
   { path: "/", component: Index, name: "index" },
-  { path: "/posts/elixir", component: Elixir, name: "elixir" },
+  //{ path: "/posts/elixir", component: Elixir, name: "elixir" },
+  { path: "/posts/microservices", component: Microservices, name: "microservices" },
+  { path: "/posts/machine-learning", component: Microservices, name: "machine-learning" },
+  { path: "/posts/deep-learning", component: Microservices, name: "deep-learning" },
   { path: "/post/:language/:slug", component: Post, name: "post" }
 ]
 
